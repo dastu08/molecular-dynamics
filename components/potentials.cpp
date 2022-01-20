@@ -39,4 +39,32 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
     return energy_total;
 }
 
+void lj_test(Eigen::Array<double, Eigen::Dynamic, 5> &data,
+             uint num_x_samples) {
+
+    //  constants from Rahman (1964)
+    const double sigma = 3.4; // angstrom
+    const double x_low = 3 / sigma;
+    const double x_high = 10 / sigma;
+    const uint num_particles = 2;
+    // initialize the positions
+    Eigen::ArrayX3d positions = Eigen::ArrayX3d::Zero(num_particles, 3);
+    Eigen::ArrayX3d forces;
+    double energy;
+    uint iter = 0;
+
+    Eigen::VectorXd xs = Eigen::VectorXd::LinSpaced(num_x_samples, x_low, x_high);
+
+    for (double x : xs) {
+        // set only x-coordinate of particle 2
+        positions(1, 0) = x;
+
+        // compute the LJ energy
+        data(iter, 0) = x;
+        data(iter, 1) = MD::lennard_jones(positions, forces, num_particles);
+        data(iter, {2, 3, 4}) = forces.row(0).transpose();
+        ++iter;
+    }
+}
+
 }  // namespace MD
