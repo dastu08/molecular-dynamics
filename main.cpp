@@ -21,5 +21,7 @@ int main() {
     // compute the LJ energy
     energy = MD::lennard_jones(positions, forces, num_particles);
 
+    std::cout << "Total energy: " << energy << std::endl;
+
     return 0;
 }
