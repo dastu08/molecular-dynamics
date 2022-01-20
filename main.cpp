@@ -19,7 +19,7 @@ int main() {
     MD::array2file(positions, "test.txt", "x,y,z");
 
     // compute the LJ energy
-    // energy = MD::lennard_jones(positions, forces, num_particles);
+    energy = MD::lennard_jones(positions, forces, num_particles);
 
     return 0;
 }
