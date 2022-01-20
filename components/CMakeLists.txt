@@ -1,1 +1,1 @@
-add_library(potentials potentials.cpp)
+add_library(components STATIC helpers.cpp potentials.cpp)
