@@ -32,7 +32,8 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
             forces.row(j) -= fij * xij.array();
 
             // add the potential energy of the pair to the total energy
-            energy_total += 4 * r6_inv * (r6_inv - 1);
+            // 8=2*4 because it counts for both particles
+            energy_total += 8 * r6_inv * (r6_inv - 1);
         }
     }
 
