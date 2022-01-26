@@ -53,7 +53,8 @@ void sample_x(uint index,
     data(index, 4) = velocities(1, 0);
     // energies
     data(index, 5) = e_pot;
-    data(index, 6) = velocities.square().sum();
+    // only need to add the mass later
+    data(index, 6) = velocities.square().sum() / 2;
 }
 
 }  // namespace MD
