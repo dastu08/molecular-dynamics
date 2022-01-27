@@ -1,5 +1,7 @@
 #include "solvers.h"
 
+#include <iostream>
+
 namespace MD {
 
 void velocity_verlet(Eigen::ArrayX3d &positions,
@@ -20,12 +22,20 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     Eigen::ArrayX3d forces;
     double e_pot;
     double t = 0;
+
+    if (positions.size() != velocities.size()) {
+        std::cout << "[Error] The sizes of positions and velocties don't match.\
+            Aborting veloctiy verlet algorithm !"
+                  << std::endl;
+        return;
+    }
+
     // initial energy/force calculation
     e_pot = force(positions, forces, num_particles);
     sampler(0, t, positions, velocities, e_pot, data);
 
     // run the integration over time
-    for (int i = 1; i < num_t_steps; i++) {
+    for (uint i = 1; i < num_t_steps; i++) {
         // assume forces are already for current positons
         positions += velocities * time_step + forces * time_step * time_step / 2;
         // add last force term
