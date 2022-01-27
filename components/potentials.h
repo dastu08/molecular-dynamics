@@ -8,7 +8,7 @@ namespace MD {
 // Compute the LJ energy and forces for N particles in 3 dimensions.
 //
 // Parameters:
-//  - positions : array of particle positions of size Nx3, N is the number of
+// - positions : array of particle positions of size Nx3, N is the number of
 //  particles
 // - forces: array of the total forces on each particle, same size as positions
 // - num_particles: number of particles, equivalent to the number of rows of the
@@ -27,8 +27,8 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
 // Test the LJ energy and force calculation.
 //
 // Parameters:
-//  - data: array to hold the (x, energy, force) in the columns
-//  - num_x_samples: determines how many steps in x are computed, it will be the
+// - data: array to hold the (x, energy, force) in the columns
+// - num_x_samples: determines how many steps in x are computed, it will be the
 //  number of rows of the array data
 // 
 // Description:
