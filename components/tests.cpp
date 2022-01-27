@@ -17,7 +17,6 @@ void lj_test(Eigen::Array<double, Eigen::Dynamic, 5> &data,
     // initialize the positions
     Eigen::ArrayX3d positions = Eigen::ArrayX3d::Zero(num_particles, 3);
     Eigen::ArrayX3d forces;
-    double energy;
     uint iter = 0;
 
     Eigen::VectorXd xs = Eigen::VectorXd::LinSpaced(num_x_samples, x_low, x_high);
