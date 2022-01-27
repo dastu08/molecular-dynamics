@@ -40,11 +40,11 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 }
 
 void sample_x2(uint index,
-              double time,
-              Eigen::ArrayX3d &positions,
-              Eigen::ArrayX3d &velocities,
-              double e_pot,
-              Eigen::ArrayXXd &data) {
+               double time,
+               Eigen::ArrayX3d &positions,
+               Eigen::ArrayX3d &velocities,
+               double e_pot,
+               Eigen::ArrayXXd &data) {
     data(index, 0) = time;
     // particle 1 - x components
     data(index, 1) = positions(0, 0);

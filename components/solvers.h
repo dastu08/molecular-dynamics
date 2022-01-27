@@ -14,6 +14,7 @@ namespace MD {
 // - forces: array of the total forces on each particle, same size as positions
 // - force: function with arguments (positions, forces, num_particles) which
 //  computes the forces and returns the potential energy
+// - time_step: step size in time
 // - num_t_steps: number of steps in time, i.e. how often the loop runs
 // - num_particles: number of particles, equivalent to the number of rows of the
 //  arrays positions and forces
@@ -47,7 +48,6 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayXXd &),
                      Eigen::ArrayXXd &data);
 
-
 // Sample the x-components of the first two particles.
 //
 // Parameters:
@@ -59,18 +59,16 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 // - e_pot: potential energy of the whole system
 // - data: array with at least 6 column where the data will be written to
 //
-// Description: 
-//  Save in the index row of data the quantities: 
+// Description:
+//  Save in the index row of data the quantities:
 //  time, x1, v1, x2, v2, e_pot, e_kin.
 //  e_pot and e_kin are computed using the whole system.
 void sample_x2(uint index,
-              double time,
-              Eigen::ArrayX3d &positions,
-              Eigen::ArrayX3d &velocities,
-              double e_pot,
-              Eigen::ArrayXXd &data);
-
-void vv_test();
+               double time,
+               Eigen::ArrayX3d &positions,
+               Eigen::ArrayX3d &velocities,
+               double e_pot,
+               Eigen::ArrayXXd &data);
 
 }  // namespace MD
 
