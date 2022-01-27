@@ -18,13 +18,13 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayXXd &),
                      Eigen::ArrayXXd &data) {
     Eigen::ArrayX3d forces;
-    // Eigen::VectorXd energies = Eigen::VectorXd::Zero(num_t_steps);
     double e_pot;
     double t = 0;
     // initial energy/force calculation
     e_pot = force(positions, forces, num_particles);
     sampler(0, t, positions, velocities, e_pot, data);
 
+    // run the integration over time
     for (int i = 1; i < num_t_steps; i++) {
         // assume forces are already for current positons
         positions += velocities * time_step + forces * time_step * time_step / 2;
@@ -34,11 +34,12 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
         // add current force term
         velocities += forces * time_step / 2;
         t += time_step;
+        // call the sampler to save quantities in data
         sampler(i, t, positions, velocities, e_pot, data);
     }
 }
 
-void sample_x(uint index,
+void sample_x2(uint index,
               double time,
               Eigen::ArrayX3d &positions,
               Eigen::ArrayX3d &velocities,
