@@ -27,8 +27,26 @@ void lj_test(Eigen::Array<double, Eigen::Dynamic, 5> &data,
 //  number of rows of the array data
 //
 // Description:
-//  Test two argon atoms separated by 4 angstrom bouncing in their LJ potential.
+//  Test two argon atoms separated by 5 angstrom bouncing in their LJ potential.
 void vv_test(Eigen::ArrayXXd &data, double time_step, uint num_t_steps);
+
+// Test the accuracy of the velocity verlet algorithm on the time step.
+//
+// Parameters:
+// - data: array to hold the the columns (index, time_step)
+// - time_step_0: start step size in time
+// - time_step_1: stop step size in time
+// - num_t_step_samples: determines how many steps in time_step are computed, 
+//  it will be the number of rows of the array data
+//
+// Description:
+//  Test two argon atoms separated by 5 angstrom bouncing in their LJ potential.
+//  Vary the time step and record the list of potential and kintetic energy over
+//  time (2000 steps) in a separate file.
+void time_step_test(Eigen::ArrayX2d &data,
+                    double time_step_0,
+                    double time_step_1,
+                    uint num_t_step_samples);
 
 }  // namespace MD
 

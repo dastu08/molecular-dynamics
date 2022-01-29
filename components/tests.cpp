@@ -1,7 +1,10 @@
 #include "tests.h"
 
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
+#include "helpers.h"
 #include "potentials.h"
 #include "solvers.h"
 
@@ -38,7 +41,7 @@ void lj_test(Eigen::Array<double, Eigen::Dynamic, 5> &data,
 void vv_test(Eigen::ArrayXXd &data, double time_step, uint num_t_steps) {
     double sigma = 3.4;
     uint num_particles = 2;
-    Eigen::ArrayX3d positions{{0, 0, 0}, {4 / sigma, 0, 0}};
+    Eigen::ArrayX3d positions{{0, 0, 0}, {5 / sigma, 0, 0}};
     Eigen::ArrayX3d velocities{{0, 0, 0}, {0, 0, 0}};
     // Eigen::ArrayXXd data_vv = Eigen::ArrayXXd::Zero(num_t_steps, 7);
 
@@ -52,6 +55,46 @@ void vv_test(Eigen::ArrayXXd &data, double time_step, uint num_t_steps) {
                         data);
 
     std::cout << "[Info] Performed vv_test" << std::endl;
+}
+
+void time_step_test(Eigen::ArrayX2d &data,
+                    double time_step_0,
+                    double time_step_1,
+                    uint num_t_step_samples) {
+    double sigma = 3.4;
+    double time_step_delta = (time_step_1 - time_step_0) / num_t_step_samples;
+    double time_step;
+    uint num_particles = 2;
+    uint num_t_steps = 2000;
+    Eigen::ArrayX3d positions{{0, 0, 0}, {5 / sigma, 0, 0}};
+    Eigen::ArrayX3d velocities{{0, 0, 0}, {0, 0, 0}};
+    Eigen::ArrayXXd data_vv = Eigen::ArrayXXd::Zero(num_t_steps, 3);
+    std::ostringstream oss;
+
+    for (uint i = 0; i < num_t_step_samples; i++) {
+        time_step = time_step_0 + i * time_step_delta;
+        data(i, 0) = i;
+        data(i, 1) = time_step;
+
+        MD::velocity_verlet(positions,
+                            velocities,
+                            MD::lennard_jones,
+                            time_step,
+                            num_t_steps,
+                            num_particles,
+                            MD::sample_energies,
+                            data_vv);
+
+        oss << "../data/01/ts_test"
+            << std::setfill('0')
+            << std::setw(3)
+            << i << ".txt";
+        MD::array2file(data_vv, oss.str(), "t,epot,ekin");
+        oss.clear();
+        oss.str("");
+    }
+
+    std::cout << "[Info] Performed time_step_test" << std::endl;
 }
 
 }  // namespace MD

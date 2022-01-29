@@ -68,4 +68,15 @@ void sample_x2(uint index,
     data(index, 6) = velocities.square().sum() / 2;
 }
 
+void sample_energies(uint index,
+                 double time,
+                 Eigen::ArrayX3d &positions,
+                 Eigen::ArrayX3d &velocities,
+                 double e_pot,
+                 Eigen::ArrayXXd &data) {
+    data(index, 0) = time;
+    data(index, 1) = e_pot;
+    data(index, 2) = velocities.square().sum() / 2;
+}
+
 }  // namespace MD
