@@ -2,3 +2,5 @@
 build/
 reports/
 data/
+*.pdf
+*.zip
