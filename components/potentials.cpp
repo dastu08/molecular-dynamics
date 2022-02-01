@@ -16,9 +16,9 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
     forces = Eigen::ArrayX3d::Zero(num_particles, 3);
 
     // loop over i-j pairs of particles.
-    for (int i = 0; i < num_particles; i++) {
+    for (uint i = 0; i < num_particles; i++) {
         // since i-j  and j-i are equivalent only start from j = i + 1
-        for (int j = i + 1; j < num_particles; j++) {
+        for (uint j = i + 1; j < num_particles; j++) {
             // relative position btwn the particles
             xij = positions.row(i) - positions.row(j);
             // compute powers of the inverse distance
@@ -32,6 +32,7 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
             forces.row(j) -= fij * xij.array();
 
             // add the potential energy of the pair to the total energy
+            // only once because it already incorporates the pair of particles
             energy_total += 4 * r6_inv * (r6_inv - 1);
         }
     }

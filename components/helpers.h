@@ -6,7 +6,7 @@
 
 namespace MD {
 
-void array2file(Eigen::ArrayX3d array, std::string filename, std::string head);
+void array2file(Eigen::ArrayXXd array, std::string filename, std::string head);
 
 }  // namespace MD
 

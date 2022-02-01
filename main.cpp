@@ -3,25 +3,42 @@
 
 #include "components/helpers.h"
 #include "components/potentials.h"
+#include "components/solvers.h"
+#include "components/tests.h"
+
+#define REPORT_1
+
+// see Rahman for the constant
+const double sigma = 3.4;
 
 int main() {
-    // report 1. dynamics
+    // Report 1. Dynamics
+#ifdef REPORT_1
 
-    // initialize the positions
-    Eigen::ArrayX3d positions{{0, 0, 0}, {3.5, 0, 0}};
-    Eigen::ArrayX3d forces;
-    const uint num_particles = 2;
-    double energy;
+    // Potential test
+    uint num_samples = 1000;
+    Eigen::Array<double, Eigen::Dynamic, 5> data_lj(num_samples, 5);
+    MD::lj_test(data_lj, num_samples);
+    MD::array2file(data_lj, "../data/01/lj_test.txt", "x,energy,fx,fy,fz");
 
-    std::cout << "initial positions\n"
-              << positions << std::endl;
+    // Velocity Verlet test
+    double time_step = 0.01;  // accurate
+    uint num_t_steps = 2000;
+    Eigen::ArrayXXd data_vv = Eigen::ArrayXXd::Zero(num_t_steps, 7);
+    MD::vv_test(data_vv, time_step, num_t_steps);
+    MD::array2file(data_vv, "../data/01/vv_test.txt", "t,x1,v1,x2,v2,epot,ekin");
 
-    MD::array2file(positions, "test.txt", "x,y,z");
+    time_step = 0.05;  // inaccurate
+    data_vv = Eigen::ArrayXXd::Zero(num_t_steps, 7);
+    MD::vv_test(data_vv, time_step, num_t_steps);
+    MD::array2file(data_vv, "../data/01/vv_test2.txt", "t,x1,v1,x2,v2,epot,ekin");
 
-    // compute the LJ energy
-    energy = MD::lennard_jones(positions, forces, num_particles);
-
-    std::cout << "Total energy: " << energy << std::endl;
+    // Scan for the stability limit
+    uint time_step_samples = 100;
+    Eigen::ArrayX2d data_ts = Eigen::ArrayXXd::Zero(time_step_samples, 2);
+    MD::time_step_test(data_ts, 0.01, 0.06, time_step_samples);
+    MD::array2file(data_ts, "../data/01/ts_test_index.txt", "index,ts");
+#endif  // REPORT_1
 
     return 0;
 }

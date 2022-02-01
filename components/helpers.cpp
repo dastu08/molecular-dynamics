@@ -5,7 +5,7 @@
 
 namespace MD {
 
-void array2file(Eigen::ArrayX3d array, std::string filename, std::string head) {
+void array2file(Eigen::ArrayXXd array, std::string filename, std::string head) {
     std::ofstream file(filename);
 
     if (!file.fail()) {
@@ -16,7 +16,10 @@ void array2file(Eigen::ArrayX3d array, std::string filename, std::string head) {
         file.precision(16);
         // print row wise
         for (auto row : array.rowwise()) {
-            file << row(0) << ',' << row(1) << ',' << row(2) << '\n';
+            for (int i = 0; i < row.size() - 1; i++) {
+                file << row(i) << ',';
+            }
+            file << row(Eigen::last) << "\n";
         }
 
         std::cout << "[Info] Wrote array to file: " << filename << std::endl;
