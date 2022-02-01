@@ -2,11 +2,13 @@
 #include <iostream>
 
 #include "components/helpers.h"
+#include "components/initialization.h"
 #include "components/potentials.h"
 #include "components/solvers.h"
 #include "components/tests.h"
 
-#define REPORT_1
+// #define REPORT_1
+#define REPORT_2
 
 // see Rahman for the constant
 const double sigma = 3.4;
@@ -40,5 +42,20 @@ int main() {
     MD::array2file(data_ts, "../data/01/ts_test_index.txt", "index,ts");
 #endif  // REPORT_1
 
+// Report 2. Extended system
+#ifdef REPORT_2
+    Eigen::ArrayX3d positions;
+    uint n = 8;
+    double l = 10.299 * sigma;
+    double d = l / n;
+    std::cout << "l = " << l
+              << "\nd = " << d
+              << std::endl;
+
+    // spacial position init
+    MD::init3d(positions, n, d);
+    MD::array2file(positions, "../data/02/init.txt", "x,y,z");
+
+#endif  // REPORT_2
     return 0;
 }
