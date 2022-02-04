@@ -5,7 +5,7 @@
 
 namespace MD {
 
-// Initialize the positions in a grid
+// Initialize the positions in a grid.
 //
 // Parameters:
 // - positions: array of size n^3x3 where each row is one particles position
@@ -24,7 +24,7 @@ uint init_potisionts_3d(Eigen::ArrayX3d &positions,
                         uint num_paricles_cubic,
                         double distance);
 
-// Initialize the velocities randomly
+// Initialize the velocities randomly.
 //
 // Parameters:
 // - velocities: array of size Nx3 where N is the number of particles
@@ -38,10 +38,10 @@ uint init_potisionts_3d(Eigen::ArrayX3d &positions,
 //  numbers up to the maximum velocity.
 void init_velocities_3d(Eigen::ArrayX3d &velocities,
                         uint num_particles,
-                        double max_veloctiy,
-                        uint seed);
+                        uint seed,
+                        double max_veloctiy = 1);
 
-// Remove a drift velocity
+// Remove a drift velocity.
 //
 // Parameters:
 // - velocities: array of Nx3 where N is the number of particles
@@ -50,6 +50,21 @@ void init_velocities_3d(Eigen::ArrayX3d &velocities,
 //  Compute the average net velocity and subtract it from every individual
 //  particles velocity.
 void velocity_drift_removal(Eigen::ArrayX3d &velocities);
+
+// Rescale the velocities to match the target temperature.
+//
+// Paramters:
+// - velocites: array of size Nx3 containing the velocities (N is the number of
+//   particles)
+// - num_particles: number of particles (rows of the veloctities array)
+// - temp_targe: target temperature for the system 
+// 
+// Description:
+//  Compute the temperature of the system, aka kinetic energy and rescale the
+//  velocities to match the target temperature.
+void velocity_rescaling(Eigen::ArrayX3d &velocities,
+                        uint num_particles,
+                        double temp_target);
 
 }  // namespace MD
 

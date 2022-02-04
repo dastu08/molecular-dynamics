@@ -29,8 +29,8 @@ uint init_potisionts_3d(Eigen::ArrayX3d &positions,
 
 void init_velocities_3d(Eigen::ArrayX3d &velocities,
                         uint num_particles,
-                        double max_veloctiy,
-                        uint seed) {
+                        uint seed,
+                        double max_veloctiy) {
     // init random number generator
     srand(seed);
     for (uint i = 0; i < num_particles; ++i) {
@@ -45,6 +45,18 @@ void velocity_drift_removal(Eigen::ArrayX3d &velocities) {
     Eigen::Vector3d v = velocities.colwise().sum() / velocities.rows();
     // velocities relative to the center of mass
     velocities.rowwise() -= v.transpose().array();
+}
+
+void velocity_rescaling(Eigen::ArrayX3d &velocities,
+                        uint num_particles,
+                        double temp_target) {
+    double temp_now = velocities.square().sum() / 3 / num_particles;
+
+    velocities *= sqrt(temp_target / temp_now);
+
+    std::cout << "temp before: " << temp_now
+              << "\ntemp after: " << velocities.square().sum() / 3 / num_particles
+              << std::endl;
 }
 
 }  // namespace MD
