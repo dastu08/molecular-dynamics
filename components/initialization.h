@@ -20,7 +20,7 @@ namespace MD {
 //
 // Description:
 //  Place the particles inside a qubic lattice of the box $[0, L]^3$.
-uint init_potisionts_3d(Eigen::ArrayX3d &positions,
+uint init_positions_3d(Eigen::ArrayX3d &positions,
                         uint num_paricles_cubic,
                         double distance);
 

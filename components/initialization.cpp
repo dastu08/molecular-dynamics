@@ -6,7 +6,7 @@
 
 namespace MD {
 
-uint init_potisionts_3d(Eigen::ArrayX3d &positions,
+uint init_positions_3d(Eigen::ArrayX3d &positions,
                         uint num_paricles_cubic,
                         double distance) {
     uint num_particles = num_paricles_cubic * num_paricles_cubic * num_paricles_cubic;
