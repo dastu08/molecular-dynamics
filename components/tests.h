@@ -36,7 +36,7 @@ void vv_test(Eigen::ArrayXXd &data, double time_step, uint num_t_steps);
 // - data: array to hold the the columns (index, time_step)
 // - time_step_0: start step size in time
 // - time_step_1: stop step size in time
-// - num_t_step_samples: determines how many steps in time_step are computed, 
+// - num_t_step_samples: determines how many steps in time_step are computed,
 //  it will be the number of rows of the array data
 //
 // Description:
@@ -47,6 +47,37 @@ void time_step_test(Eigen::ArrayX2d &data,
                     double time_step_0,
                     double time_step_1,
                     uint num_t_step_samples);
+
+// Test the LJ energy and force calculation with minimal image convention.
+//
+// Parameters:
+// - data: array to hold the (x, energy, force) in the columns
+// - num_x_samples: determines how many steps in x are computed, it will be the
+//  number of rows of the array data
+//
+// Description:
+//  Two argon atoms separated between 3 and 13 angstrom. Compute the forces
+//  and the energy for 100 steps in between using the minimal image convention
+//  with side length 13 angstrom.
+void lj_test2(Eigen::Array<double, Eigen::Dynamic, 5> &data,
+              uint num_x_samples);
+
+// Test 2 bouncing particles with the minimal image convention
+//
+// Parameters:
+// - data: array to hold the (t, x1, v1, x2, v2, epot, ekin) in the columns
+// - time_step: step size in time
+// - num_t_steps: determines how many steps in t are computed, it will be the
+//  number of rows of the array data
+// - side_length: side length of the minium image convention box
+//
+// Description:
+//  Test two argon atoms separated by 3.3 angstrom bouncing in their LJ
+//  potential computed with the minimal image convention.
+void mic_test(Eigen::ArrayXXd &data,
+              double time_step,
+              uint num_t_steps,
+              double side_length);
 
 }  // namespace MD
 
