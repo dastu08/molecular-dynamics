@@ -7,8 +7,8 @@
 namespace MD {
 
 uint init_positions_3d(Eigen::ArrayX3d &positions,
-                        uint num_paricles_cubic,
-                        double distance) {
+                       uint num_paricles_cubic,
+                       double distance) {
     uint num_particles = num_paricles_cubic * num_paricles_cubic * num_paricles_cubic;
     uint index;
     positions = Eigen::ArrayX3d::Zero(num_particles, 3);
@@ -31,6 +31,7 @@ void init_velocities_3d(Eigen::ArrayX3d &velocities,
                         uint num_particles,
                         uint seed,
                         double max_veloctiy) {
+    velocities = Eigen::ArrayX3d::Zero(num_particles, 3);
     // init random number generator
     srand(seed);
     for (uint i = 0; i < num_particles; ++i) {
