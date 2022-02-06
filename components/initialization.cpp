@@ -24,6 +24,10 @@ uint init_positions_3d(Eigen::ArrayX3d &positions,
         }
     }
 
+    std::cout << "[Debug] Initialized cubic positons of "
+              << num_particles << " particles."
+              << std::endl;
+
     return num_particles;
 }
 
@@ -39,6 +43,10 @@ void init_velocities_3d(Eigen::ArrayX3d &velocities,
             velocities(i, j) = ((double)rand() / RAND_MAX - 0.5) * 2 * max_veloctiy;
         }
     }
+
+    std::cout << "[Debug] Initialized random velocites of "
+              << num_particles << " particles."
+              << std::endl;
 }
 
 void velocity_drift_removal(Eigen::ArrayX3d &velocities) {
@@ -55,8 +63,10 @@ void velocity_rescaling(Eigen::ArrayX3d &velocities,
 
     velocities *= sqrt(temp_target / temp_now);
 
-    std::cout << "temp before: " << temp_now
-              << "\ntemp after: " << velocities.square().sum() / 3 / num_particles
+    std::cout << "[Debug] velocity rescaling: temperature before: "
+              << temp_now
+              << " temp after: "
+              << velocities.square().sum() / 3 / num_particles
               << std::endl;
 }
 

@@ -23,6 +23,10 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     double e_pot;
     double t = 0;
 
+    std::cout << "[Debug] Velocity verlet algorithm with "
+              << num_t_steps << " steps."
+              << std::endl;
+              
     if (positions.size() != velocities.size()) {
         std::cout << "[Error] The sizes of positions and velocties don't match.\
             Aborting veloctiy verlet algorithm !"
@@ -32,8 +36,9 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 
     // initial energy/force calculation
     e_pot = force(positions, forces, num_particles);
-    sampler(0, t, positions, velocities, e_pot, data);
-
+    if (sampler != nullptr) {
+        sampler(0, t, positions, velocities, e_pot, data);
+    }
     // run the integration over time
     for (uint i = 1; i < num_t_steps; i++) {
         // assume forces are already for current positons
@@ -45,7 +50,9 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
         velocities += forces * time_step / 2;
         t += time_step;
         // call the sampler to save quantities in data
-        sampler(i, t, positions, velocities, e_pot, data);
+        if (sampler != nullptr) {
+            sampler(i, t, positions, velocities, e_pot, data);
+        }
     }
 }
 
@@ -70,6 +77,10 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     double e_pot;
     double t = 0;
 
+    std::cout << "[Debug] Velocity verlet algorithm with "
+              << num_t_steps << " steps."
+              << std::endl;
+
     if (positions.size() != velocities.size()) {
         std::cout << "[Error] The sizes of positions and velocties don't match.\
             Aborting veloctiy verlet algorithm !"
@@ -79,7 +90,9 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 
     // initial energy/force calculation
     e_pot = force(positions, forces, num_particles, mic_length);
-    sampler(0, t, positions, velocities, e_pot, data);
+    if (sampler != nullptr) {
+        sampler(0, t, positions, velocities, e_pot, data);
+    }
 
     // run the integration over time
     for (uint i = 1; i < num_t_steps; i++) {
@@ -92,10 +105,11 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
         velocities += forces * time_step / 2;
         t += time_step;
         // call the sampler to save quantities in data
-        sampler(i, t, positions, velocities, e_pot, data);
+        if (sampler != nullptr) {
+            sampler(i, t, positions, velocities, e_pot, data);
+        }
     }
 }
-
 
 void sample_x2(uint index,
                double time,
@@ -117,11 +131,11 @@ void sample_x2(uint index,
 }
 
 void sample_energies(uint index,
-                 double time,
-                 Eigen::ArrayX3d &positions,
-                 Eigen::ArrayX3d &velocities,
-                 double e_pot,
-                 Eigen::ArrayXXd &data) {
+                     double time,
+                     Eigen::ArrayX3d &positions,
+                     Eigen::ArrayX3d &velocities,
+                     double e_pot,
+                     Eigen::ArrayXXd &data) {
     data(index, 0) = time;
     data(index, 1) = e_pot;
     data(index, 2) = velocities.square().sum() / 2;
