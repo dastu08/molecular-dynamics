@@ -39,7 +39,7 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
 //  $V_{LJ}(r) = 4 epsilon ( (sigma/r)^{12} - (sigma/r)^6 )$
 //  The implementation has positions in units of sigma, energy in units of
 //  epsilon and forces in units of epsilon/sigma.
-double lennard_jones_mic(const Eigen::ArrayX3d &positions,
+double lennard_jones(const Eigen::ArrayX3d &positions,
                          Eigen::ArrayX3d &forces,
                          uint num_particles,
                          double side_length);

@@ -40,7 +40,7 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
     return energy_total;
 }
 
-double lennard_jones_mic(const Eigen::ArrayX3d &positions,
+double lennard_jones(const Eigen::ArrayX3d &positions,
                          Eigen::ArrayX3d &forces,
                          uint num_particles,
                          double side_length) {

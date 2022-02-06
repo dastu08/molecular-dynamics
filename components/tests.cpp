@@ -117,7 +117,7 @@ void lj_test2(Eigen::Array<double, Eigen::Dynamic, 5> &data,
 
         // compute the LJ energy
         data(iter, 0) = x;
-        data(iter, 1) = MD::lennard_jones_mic(positions, forces, num_particles, 13 / sigma);
+        data(iter, 1) = MD::lennard_jones(positions, forces, num_particles, 13 / sigma);
         data(iter, {2, 3, 4}) = forces.row(0).transpose();
         ++iter;
     }
@@ -137,7 +137,7 @@ void mic_test(Eigen::ArrayXXd &data,
 
     MD::velocity_verlet(positions,
                         velocities,
-                        MD::lennard_jones_mic,
+                        MD::lennard_jones,
                         time_step,
                         num_t_steps,
                         num_particles,
