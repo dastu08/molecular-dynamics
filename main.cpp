@@ -14,7 +14,7 @@
 const double sigma = 3.4;                       // angstrom
 const double temperature = 0.7916666666666669;  // 95 K in reduced units
 const double separation = 1.067324157068294;    // 3.63 angstrom in reduced units
-const uint seed = 19980508;
+const uint seed = 8028;
 
 int main() {
     // Report 1. Dynamics
@@ -67,9 +67,9 @@ int main() {
 
     // #ifdef dfkdjfdhf
     // // spacial position init
-    n = 7;
+    n = 8;
     time_step = 0.005;
-    num_t_steps = 20000;
+    num_t_steps = 5000;
     equilib_steps = 500;
     energies = Eigen::ArrayXXd::Zero(num_t_steps, 3);
     equilib = Eigen::ArrayXXd::Zero(equilib_steps, 3);
@@ -85,15 +85,15 @@ int main() {
     MD::velocity_drift_removal(velocities);
     MD::velocity_rescaling(velocities, num_particles, temperature);
 
-    // MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
-    //                         num_particles, temperature, box_length,
-    //                         "../data/02/equilibration1.txt");
-    // MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
-    //                         num_particles, temperature, box_length,
-    //                         "../data/02/equilibration2.txt");
-    // MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
-    //                         num_particles, temperature, box_length,
-    //                         "../data/02/equilibration3.txt");
+    MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+                            num_particles, temperature, box_length,
+                            "../data/02/equilibration1.txt");
+    MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+                            num_particles, temperature, box_length,
+                            "../data/02/equilibration2.txt");
+    MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+                            num_particles, temperature, box_length,
+                            "../data/02/equilibration3.txt");
 
     // sampling
     MD::velocity_verlet(positions,
