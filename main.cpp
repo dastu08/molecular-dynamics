@@ -52,25 +52,25 @@ int main() {
     double box_length, time_step;
     uint n, num_particles, num_t_steps, equilib_steps;
 
-    // Potential test 2 with minimal image convention
-    uint num_samples = 1000;
-    Eigen::Array<double, Eigen::Dynamic, 5> data_lj(num_samples, 5);
-    MD::lj_test2(data_lj, num_samples);
-    MD::array2file(data_lj, "../data/02/lj_test2.txt", "x,energy,fx,fy,fz");
+    // // Potential test 2 with minimal image convention
+    // uint num_samples = 1000;
+    // Eigen::Array<double, Eigen::Dynamic, 5> data_lj(num_samples, 5);
+    // MD::lj_test2(data_lj, num_samples);
+    // MD::array2file(data_lj, "../data/02/lj_test2.txt", "x,energy,fx,fy,fz");
 
-    // minimal image convention test
-    time_step = 0.01;  // accurate
-    num_t_steps = 200;
-    Eigen::ArrayXXd data_mic = Eigen::ArrayXXd::Zero(num_t_steps, 7);
-    MD::mic_test(data_mic, time_step, num_t_steps, 10 / sigma);
-    MD::array2file(data_mic, "../data/02/mic_test.txt", "t,x1,v1,x2,v2,epot,ekin");
+    // // minimal image convention test
+    // time_step = 0.01;  // accurate
+    // num_t_steps = 200;
+    // Eigen::ArrayXXd data_mic = Eigen::ArrayXXd::Zero(num_t_steps, 7);
+    // MD::mic_test(data_mic, time_step, num_t_steps, 10 / sigma);
+    // MD::array2file(data_mic, "../data/02/mic_test.txt", "t,x1,v1,x2,v2,epot,ekin");
 
-// #ifdef dfkdjfdhf
+    // #ifdef dfkdjfdhf
     // // spacial position init
-    n = 8;
+    n = 7;
     time_step = 0.005;
-    num_t_steps = 4000;
-    equilib_steps = 200;
+    num_t_steps = 20000;
+    equilib_steps = 500;
     energies = Eigen::ArrayXXd::Zero(num_t_steps, 3);
     equilib = Eigen::ArrayXXd::Zero(equilib_steps, 3);
 
@@ -81,41 +81,19 @@ int main() {
               << "number of particles: " << num_particles
               << std::endl;
 
-    MD::init_velocities_3d(velocities, num_particles, seed);
+    MD::init_velocities_3d(velocities, num_particles, seed, 3);
     MD::velocity_drift_removal(velocities);
     MD::velocity_rescaling(velocities, num_particles, temperature);
 
-    // equilibration 1
-    MD::velocity_verlet(positions,
-                        velocities,
-                        MD::lennard_jones,
-                        time_step,
-                        equilib_steps,
-                        num_particles,
-                        MD::sample_energies,
-                        equilib,
-                        box_length);
-    std::cout << "equilibration 1, temperature: "
-              << MD::computeTemperature(velocities) << std::endl;
-    MD::array2file(equilib, "../data/02/equilibration1.txt", "t,epot,ekin");
-
-    MD::velocity_rescaling(velocities, num_particles, temperature);
-
-    // equilibration 2
-    MD::velocity_verlet(positions,
-                        velocities,
-                        MD::lennard_jones,
-                        time_step,
-                        equilib_steps,
-                        num_particles,
-                        MD::sample_energies,
-                        equilib,
-                        box_length);
-    std::cout << "equilibration 1, temperature: "
-              << MD::computeTemperature(velocities) << std::endl;
-    MD::array2file(equilib, "../data/02/equilibration2.txt", "t,epot,ekin");
-
-    MD::velocity_rescaling(velocities, num_particles, temperature);
+    // MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+    //                         num_particles, temperature, box_length,
+    //                         "../data/02/equilibration1.txt");
+    // MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+    //                         num_particles, temperature, box_length,
+    //                         "../data/02/equilibration2.txt");
+    // MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+    //                         num_particles, temperature, box_length,
+    //                         "../data/02/equilibration3.txt");
 
     // sampling
     MD::velocity_verlet(positions,
@@ -127,7 +105,8 @@ int main() {
                         MD::sample_energies,
                         energies,
                         box_length);
-    std::cout << "final temperature: "
+    std::cout << "sampling of duration " << time_step * num_t_steps
+              << ", final temperature: "
               << MD::computeTemperature(velocities) << std::endl;
 
     MD::array2file(energies, "../data/02/energies.txt", "t,epot,ekin");

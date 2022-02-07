@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "helpers.h"
+#include "initialization.h"
 #include "potentials.h"
 #include "solvers.h"
 
@@ -145,6 +146,35 @@ void mic_test(Eigen::ArrayXXd &data,
                         side_length);
 
     std::cout << "[Info] Performed mic_test" << std::endl;
+}
+
+void equilibration_phase(Eigen::ArrayX3d &positions,
+                         Eigen::ArrayX3d &velocities,
+                         double time_step,
+                         double num_t_steps,
+                         uint num_particles,
+                         double temperature,
+                         double box_length,
+                         std::string filename) {
+    Eigen::ArrayXXd equilib = Eigen::ArrayXXd::Zero(num_t_steps, 3);
+
+    MD::velocity_rescaling(velocities, num_particles, temperature);
+
+    MD::velocity_verlet(positions,
+                        velocities,
+                        MD::lennard_jones,
+                        time_step,
+                        num_t_steps,
+                        num_particles,
+                        MD::sample_energies,
+                        equilib,
+                        box_length);
+
+    std::cout << "[Debug] Equilibration phase of duration "
+              << num_t_steps * time_step
+              << ", temperature: "
+              << MD::computeTemperature(velocities) << std::endl;
+    MD::array2file(equilib, filename, "t,epot,ekin");
 }
 
 }  // namespace MD

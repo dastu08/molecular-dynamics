@@ -2,6 +2,7 @@
 #define __TESTS_H__
 
 #include <Eigen/Core>
+#include <string>
 
 namespace MD {
 
@@ -78,6 +79,31 @@ void mic_test(Eigen::ArrayXXd &data,
               double time_step,
               uint num_t_steps,
               double side_length);
+
+// Equilibrate the system afer velocity rescaling
+//
+// Parameters:
+// - positions: Nx3 array of the positons 
+// - velocties: Nx3 array of the velocities
+// - time_step: step size in time for velocity verlet
+// - num_t_steps: number of time steps to run velocity verlet
+// - num_particles: number of particles
+// - temperature: target temperature of the system
+// - box_length: side length of the box for periodic boundary conditions
+// - filename: name of the text file containing the energies sampled during the
+//   equilibration phase
+//
+// Description:
+//  Rescale the velocities using the target temperature. Then run velocity
+//  verlet and save the sampled energies (t, epot, ekin) in a file.
+void equilibration_phase(Eigen::ArrayX3d &positions,
+                         Eigen::ArrayX3d &velocities,
+                         double time_step,
+                         double num_t_steps,
+                         uint num_particles,
+                         double temperature,
+                         double box_length,
+                         std::string filename);
 
 }  // namespace MD
 
