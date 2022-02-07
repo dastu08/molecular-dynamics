@@ -133,7 +133,6 @@ void mic_test(Eigen::ArrayXXd &data,
     uint num_particles = 2;
     Eigen::ArrayX3d positions{{0, 0, 0}, {3.3 / sigma, 0, 0}};
     Eigen::ArrayX3d velocities{{0, 0, 0}, {0, 0, 0}};
-    // Eigen::ArrayXXd data_vv = Eigen::ArrayXXd::Zero(num_t_steps, 7);
 
     MD::velocity_verlet(positions,
                         velocities,

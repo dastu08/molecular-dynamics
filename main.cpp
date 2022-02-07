@@ -49,29 +49,31 @@ int main() {
 #ifdef REPORT_2
     Eigen::ArrayX3d positions, velocities, forces;
     Eigen::ArrayXXd energies, equilib;
-    uint n = 8;
-    uint num_particles;
-    double box_length;
-    double time_step = 0.001;
-    uint num_t_steps = 4000;
-    uint equilib_steps = 500;
+    double box_length, time_step;
+    uint n, num_particles, num_t_steps, equilib_steps;
+
+    // Potential test 2 with minimal image convention
+    uint num_samples = 1000;
+    Eigen::Array<double, Eigen::Dynamic, 5> data_lj(num_samples, 5);
+    MD::lj_test2(data_lj, num_samples);
+    MD::array2file(data_lj, "../data/02/lj_test2.txt", "x,energy,fx,fy,fz");
+
+    // minimal image convention test
+    time_step = 0.01;  // accurate
+    num_t_steps = 200;
+    Eigen::ArrayXXd data_mic = Eigen::ArrayXXd::Zero(num_t_steps, 7);
+    MD::mic_test(data_mic, time_step, num_t_steps, 10 / sigma);
+    MD::array2file(data_mic, "../data/02/mic_test.txt", "t,x1,v1,x2,v2,epot,ekin");
+
+// #ifdef dfkdjfdhf
+    // // spacial position init
+    n = 8;
+    time_step = 0.005;
+    num_t_steps = 4000;
+    equilib_steps = 200;
     energies = Eigen::ArrayXXd::Zero(num_t_steps, 3);
     equilib = Eigen::ArrayXXd::Zero(equilib_steps, 3);
 
-    // Potential test 2 with minimal image convention
-    // uint num_samples = 1000;
-    // Eigen::Array<double, Eigen::Dynamic, 5> data_lj(num_samples, 5);
-    // MD::lj_test2(data_lj, num_samples);
-    // MD::array2file(data_lj, "../data/02/lj_test2.txt", "x,energy,fx,fy,fz");
-
-    // minimal image convention test
-    // double time_step = 0.01;  // accurate
-    // uint num_t_steps = 2000;
-    // Eigen::ArrayXXd data_mic = Eigen::ArrayXXd::Zero(num_t_steps, 7);
-    // MD::mic_test(data_mic, time_step, num_t_steps, 10 / sigma);
-    // MD::array2file(data_mic, "../data/02/mic_test.txt", "t,x1,v1,x2,v2,epot,ekin");
-
-    // // spacial position init
     num_particles = MD::init_positions_3d(positions, n, separation);
     box_length = n * separation;
     std::cout << "box length: " << box_length << '\n'
@@ -131,6 +133,7 @@ int main() {
     MD::array2file(energies, "../data/02/energies.txt", "t,epot,ekin");
     MD::array2file(positions, "../data/02/positions.txt", "x,y,z");
     MD::array2file(velocities, "../data/02/velocities.txt", "vx,vy,vz");
+// #endif
 #endif  // REPORT_2
 
     return 0;
