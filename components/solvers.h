@@ -48,6 +48,24 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayXXd &),
                      Eigen::ArrayXXd &data);
 
+void velocity_verlet(Eigen::ArrayX3d &positions,
+                     Eigen::ArrayX3d &velocities,
+                     double (*force)(const Eigen::ArrayX3d &,
+                                     Eigen::ArrayX3d &,
+                                     uint,
+                                     double),
+                     double time_step,
+                     uint num_t_steps,
+                     uint num_particles,
+                     void (*sampler)(uint,
+                                     double,
+                                     Eigen::ArrayX3d &,
+                                     Eigen::ArrayX3d &,
+                                     double,
+                                     Eigen::ArrayXXd &),
+                     Eigen::ArrayXXd &data,
+                     double mic_length);
+
 // Sample the x-components of the first two particles.
 //
 // Parameters:
