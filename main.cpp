@@ -9,8 +9,6 @@
 
 // #define REPORT_1
 #define REPORT_2
-// #define MIC
-#define SIM
 
 // see Rahman for the constant
 const double sigma = 3.4;                       // angstrom
@@ -54,7 +52,6 @@ int main() {
     double box_length, time_step;
     uint n, num_particles, num_t_steps, equilib_steps;
 
-#ifdef MIC
     // Potential test 2 with minimal image convention
     uint num_samples = 1000;
     Eigen::Array<double, Eigen::Dynamic, 5> data_lj(num_samples, 5);
@@ -67,9 +64,7 @@ int main() {
     Eigen::ArrayXXd data_mic = Eigen::ArrayXXd::Zero(num_t_steps, 7);
     MD::mic_test(data_mic, time_step, num_t_steps, 3);
     MD::array2file(data_mic, "../data/02/mic_test.txt", "t,x1,v1,x2,v2,epot,ekin");
-#endif
 
-#ifdef SIM
     // // spacial position init
     n = 8;
     time_step = 0.005;
@@ -120,7 +115,6 @@ int main() {
     MD::array2file(positions_wrapped,
                    "../data/02/positions_wrapped.txt", "x,y,z");
     MD::array2file(velocities, "../data/02/velocities.txt", "vx,vy,vz");
-#endif
 #endif  // REPORT_2
 
     return 0;
