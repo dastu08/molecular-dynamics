@@ -70,4 +70,15 @@ void velocity_rescaling(Eigen::ArrayX3d &velocities,
               << std::endl;
 }
 
+void coordinate_wrapping(Eigen::ArrayX3d &positions,
+                         uint num_particles,
+                         double box_length) {
+    for (uint i = 0; i < positions.size(); ++i) {
+        positions(i) -= box_length * floor(positions(i) / box_length);
+    }
+
+    std::cout << "[Debug] Wrapped coordinates to box length: " << box_length
+              << std::endl;
+}
+
 }  // namespace MD

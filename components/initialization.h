@@ -21,8 +21,8 @@ namespace MD {
 // Description:
 //  Place the particles inside a qubic lattice of the box $[0, L]^3$.
 uint init_positions_3d(Eigen::ArrayX3d &positions,
-                        uint num_paricles_cubic,
-                        double distance);
+                       uint num_paricles_cubic,
+                       double distance);
 
 // Initialize the velocities randomly.
 //
@@ -57,14 +57,29 @@ void velocity_drift_removal(Eigen::ArrayX3d &velocities);
 // - velocites: array of size Nx3 containing the velocities (N is the number of
 //   particles)
 // - num_particles: number of particles (rows of the veloctities array)
-// - temp_targe: target temperature for the system 
-// 
+// - temp_targe: target temperature for the system
+//
 // Description:
 //  Compute the temperature of the system, aka kinetic energy and rescale the
 //  velocities to match the target temperature.
 void velocity_rescaling(Eigen::ArrayX3d &velocities,
                         uint num_particles,
                         double temp_target);
+
+
+// Wrap the positions to be in the initial box
+//
+// Parameters:
+// - positions: Nx3 array of the particle positions, N number of particles
+// - num_particles: number of particles, rows in positions array
+// - box_length: side length of the initial box
+//
+// Description:
+//  Wrap the position coordnates such that they fall in the 3D box of the
+//  specified side length and a vertex at zero.
+void coordinate_wrapping(Eigen::ArrayX3d &positions,
+                         uint num_particles,
+                         double box_length);
 
 }  // namespace MD
 

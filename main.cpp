@@ -49,7 +49,7 @@ int main() {
 
 // Report 2. Extended system
 #ifdef REPORT_2
-    Eigen::ArrayX3d positions, velocities, forces;
+    Eigen::ArrayX3d positions, positions_wrapped, velocities, forces;
     Eigen::ArrayXXd energies, equilib;
     double box_length, time_step;
     uint n, num_particles, num_t_steps, equilib_steps;
@@ -113,8 +113,12 @@ int main() {
               << ", final temperature: "
               << MD::computeTemperature(velocities) << std::endl;
 
+    positions_wrapped = positions;
+    MD::coordinate_wrapping(positions_wrapped, num_particles, box_length);
     MD::array2file(energies, "../data/02/energies.txt", "t,epot,ekin");
     MD::array2file(positions, "../data/02/positions.txt", "x,y,z");
+    MD::array2file(positions_wrapped,
+                   "../data/02/positions_wrapped.txt", "x,y,z");
     MD::array2file(velocities, "../data/02/velocities.txt", "vx,vy,vz");
 #endif
 #endif  // REPORT_2
