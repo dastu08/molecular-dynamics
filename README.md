@@ -8,7 +8,7 @@
 ```bash
 # create directory structure
 mkdir data
-mkdir data/01
+mkdir data/02
 mkdir build
 # build the project
 cd build
