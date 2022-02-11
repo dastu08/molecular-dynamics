@@ -60,16 +60,16 @@ int main() {
 
     // minimal image convention test
     time_step = 0.01;  // accurate
-    num_t_steps = 200;
+    num_t_steps = 800;
     Eigen::ArrayXXd data_mic = Eigen::ArrayXXd::Zero(num_t_steps, 7);
-    MD::mic_test(data_mic, time_step, num_t_steps, 12 / sigma);
+    MD::mic_test(data_mic, time_step, num_t_steps, 17 / sigma);
     MD::array2file(data_mic, "../data/02/mic_test.txt", "t,x1,v1,x2,v2,epot,ekin");
 
     // // spacial position init
     n = 8;
     time_step = 0.005;
-    num_t_steps = 5000;
-    equilib_steps = 500;
+    num_t_steps = 500;
+    equilib_steps = 10;
     energies = Eigen::ArrayXXd::Zero(num_t_steps, 3);
     equilib = Eigen::ArrayXXd::Zero(equilib_steps, 3);
 
@@ -93,6 +93,12 @@ int main() {
     MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
                             num_particles, temperature, box_length,
                             "../data/02/equilibration3.txt");
+    MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+                            num_particles, temperature, box_length,
+                            "../data/02/equilibration4.txt");
+    MD::equilibration_phase(positions, velocities, time_step, equilib_steps,
+                            num_particles, temperature, box_length,
+                            "../data/02/equilibration5.txt");
 
     // sampling
     MD::velocity_verlet(positions,

@@ -132,7 +132,7 @@ void mic_test(Eigen::ArrayXXd &data,
               double side_length) {
     double sigma = 3.4;
     uint num_particles = 2;
-    Eigen::ArrayX3d positions{{0.2 / sigma, 0, 0}, {side_length - 4.8 / sigma, 0, 0}};
+    Eigen::ArrayX3d positions{{1 / sigma, 0, 0}, {11 / sigma, 0, 0}};
     Eigen::ArrayX3d velocities{{0, 0, 0}, {0, 0, 0}};
 
     MD::velocity_verlet(positions,
