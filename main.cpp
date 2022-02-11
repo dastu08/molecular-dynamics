@@ -109,7 +109,7 @@ int main() {
               << MD::computeTemperature(velocities) << std::endl;
 
     positions_wrapped = positions;
-    MD::coordinate_wrapping(positions_wrapped, num_particles, box_length);
+    MD::coordinate_wrapping(positions_wrapped, box_length);
     MD::array2file(energies, "../data/02/energies.txt", "t,epot,ekin");
     MD::array2file(positions, "../data/02/positions.txt", "x,y,z");
     MD::array2file(positions_wrapped,
