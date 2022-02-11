@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "initialization.h"
+
 namespace MD {
 
 void velocity_verlet(Eigen::ArrayX3d &positions,
@@ -26,7 +28,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     std::cout << "[Debug] Velocity verlet algorithm with "
               << num_t_steps << " steps."
               << std::endl;
-              
+
     if (positions.size() != velocities.size()) {
         std::cout << "[Error] The sizes of positions and velocties don't match.\
             Aborting veloctiy verlet algorithm !"
@@ -70,7 +72,8 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayX3d &,
                                      Eigen::ArrayX3d &,
                                      double,
-                                     Eigen::ArrayXXd &),
+                                     Eigen::ArrayXXd &,
+                                     double),
                      Eigen::ArrayXXd &data,
                      double mic_length) {
     Eigen::ArrayX3d forces;
@@ -91,7 +94,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     // initial energy/force calculation
     e_pot = force(positions, forces, num_particles, mic_length);
     if (sampler != nullptr) {
-        sampler(0, t, positions, velocities, e_pot, data);
+        sampler(0, t, positions, velocities, e_pot, data, mic_length);
     }
 
     // run the integration over time
@@ -106,7 +109,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
         t += time_step;
         // call the sampler to save quantities in data
         if (sampler != nullptr) {
-            sampler(i, t, positions, velocities, e_pot, data);
+            sampler(i, t, positions, velocities, e_pot, data, mic_length);
         }
     }
 }
@@ -130,12 +133,46 @@ void sample_x2(uint index,
     data(index, 6) = velocities.square().sum() / 2;
 }
 
+void sample_x2_wrapped(uint index,
+                       double time,
+                       Eigen::ArrayX3d &positions,
+                       Eigen::ArrayX3d &velocities,
+                       double e_pot,
+                       Eigen::ArrayXXd &data,
+                       double side_length) {
+    Eigen::ArrayX3d pos_wrapped = positions;
+    MD::coordinate_wrapping(pos_wrapped, side_length);
+    data(index, 0) = time;
+    // particle 1 - x components
+    data(index, 1) = pos_wrapped(0, 0);
+    data(index, 2) = velocities(0, 0);
+    // particle 2 - x components
+    data(index, 3) = pos_wrapped(1, 0);
+    data(index, 4) = velocities(1, 0);
+    // energies
+    data(index, 5) = e_pot;
+    // only need to add the mass later
+    data(index, 6) = velocities.square().sum() / 2;
+}
+
 void sample_energies(uint index,
                      double time,
                      Eigen::ArrayX3d &positions,
                      Eigen::ArrayX3d &velocities,
                      double e_pot,
                      Eigen::ArrayXXd &data) {
+    data(index, 0) = time;
+    data(index, 1) = e_pot;
+    data(index, 2) = velocities.square().sum() / 2;
+}
+
+void sample_energies(uint index,
+                     double time,
+                     Eigen::ArrayX3d &positions,
+                     Eigen::ArrayX3d &velocities,
+                     double e_pot,
+                     Eigen::ArrayXXd &data,
+                     double side_length) {
     data(index, 0) = time;
     data(index, 1) = e_pot;
     data(index, 2) = velocities.square().sum() / 2;

@@ -62,7 +62,8 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayX3d &,
                                      Eigen::ArrayX3d &,
                                      double,
-                                     Eigen::ArrayXXd &),
+                                     Eigen::ArrayXXd &,
+                                     double),
                      Eigen::ArrayXXd &data,
                      double mic_length);
 
@@ -88,6 +89,14 @@ void sample_x2(uint index,
                double e_pot,
                Eigen::ArrayXXd &data);
 
+void sample_x2_wrapped(uint index,
+                       double time,
+                       Eigen::ArrayX3d &positions,
+                       Eigen::ArrayX3d &velocities,
+                       double e_pot,
+                       Eigen::ArrayXXd &data,
+                       double side_length);
+
 // Sample the potential and kinetic energies.
 //
 // Parameters:
@@ -108,6 +117,13 @@ void sample_energies(uint index,
                      Eigen::ArrayX3d &velocities,
                      double e_pot,
                      Eigen::ArrayXXd &data);
+void sample_energies(uint index,
+                     double time,
+                     Eigen::ArrayX3d &positions,
+                     Eigen::ArrayX3d &velocities,
+                     double e_pot,
+                     Eigen::ArrayXXd &data,
+                     double side_length);
 }  // namespace MD
 
 #endif  // __SOLVERS_H__

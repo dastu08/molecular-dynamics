@@ -62,7 +62,7 @@ int main() {
     time_step = 0.01;  // accurate
     num_t_steps = 200;
     Eigen::ArrayXXd data_mic = Eigen::ArrayXXd::Zero(num_t_steps, 7);
-    MD::mic_test(data_mic, time_step, num_t_steps, 3);
+    MD::mic_test(data_mic, time_step, num_t_steps, 12 / sigma);
     MD::array2file(data_mic, "../data/02/mic_test.txt", "t,x1,v1,x2,v2,epot,ekin");
 
     // // spacial position init
