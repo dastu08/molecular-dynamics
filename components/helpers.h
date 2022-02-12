@@ -12,6 +12,8 @@ inline double computeTemperature(Eigen::ArrayX3d& velocities) {
     return velocities.square().sum() / velocities.rows() / 3;
 }
 
+void stringList(std::string& string, std::string symbol, uint repetition);
+
 }  // namespace MD
 
 #endif  // __HELPERS_H__

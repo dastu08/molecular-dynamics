@@ -30,4 +30,14 @@ void array2file(Eigen::ArrayXXd array, std::string filename, std::string head) {
     file.close();
 }
 
+void stringList(std::string &string, std::string symbol, uint repetition) {
+    // clear string first
+    string.empty();
+    // append counted symbol
+    for (uint i = 0; i < repetition; ++i) {
+        string.append(symbol + std::to_string(i) + ',');
+    }
+    string.erase(string.end()-1);
+}
+
 }  // namespace MD
