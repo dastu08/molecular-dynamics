@@ -9,7 +9,6 @@ namespace MD {
 //
 // Parameters:
 // - positions: Nx3 array of the positions
-// - num_particles: number of particles, rows in positions array
 // - r_hist: vector for containing the histogram counts of the radial bins
 // - num_bins: number of bins in the radial distribution, length of r_hist
 // - box_length: side length of the box, used for minimum image convention
@@ -19,7 +18,6 @@ namespace MD {
 //  image convention. Count the distances in bins for a radius from 0 to
 //  box_length.
 void radial_distribution_hist(Eigen::ArrayX3d& positions,
-                              uint num_particles,
                               Eigen::VectorXi& r_hist,
                               uint num_bins,
                               double box_length);

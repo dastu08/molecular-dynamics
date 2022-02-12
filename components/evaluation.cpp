@@ -5,17 +5,17 @@
 namespace MD {
 
 void radial_distribution_hist(Eigen::ArrayX3d& positions,
-                              uint num_particles,
                               Eigen::VectorXi& r_hist,
                               uint num_bins,
                               double box_length) {
     double delta_r = box_length / num_bins;
+    uint num_particles = positions.rows();
     int idx;
     Eigen::Vector3d xij;
 
     r_hist = Eigen::VectorXi::Zero(num_bins);
 
-    std::cout << "delta_r = " << delta_r << std::endl;
+    // std::cout << "delta_r = " << delta_r << std::endl;
 
     // loop over i-j pairs of particles.
     for (uint i = 0; i < num_particles; i++) {
