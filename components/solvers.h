@@ -67,6 +67,26 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                      Eigen::ArrayXXd &data,
                      double mic_length);
 
+void velocity_verlet(Eigen::ArrayX3d &positions,
+                     Eigen::ArrayX3d &velocities,
+                     double (*force)(const Eigen::ArrayX3d &,
+                                     Eigen::ArrayX3d &,
+                                     uint,
+                                     double),
+                     double time_step,
+                     uint num_t_steps,
+                     uint num_particles,
+                     void (*sampler)(uint,
+                                     double,
+                                     Eigen::ArrayX3d &,
+                                     Eigen::ArrayX3d &,
+                                     double,
+                                     Eigen::ArrayXXd &,
+                                     double,
+                                     uint),
+                     Eigen::ArrayXXd &data,
+                     double mic_length,
+                     uint num_bins);
 }  // namespace MD
 
 #endif  // __SOLVERS_H__
