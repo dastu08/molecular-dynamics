@@ -3,4 +3,6 @@ add_library(components STATIC
             tests.cpp 
             potentials.cpp 
             solvers.cpp 
-            initialization.cpp)
+            initialization.cpp
+            evaluation.cpp
+            samplers.cpp)
