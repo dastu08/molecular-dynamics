@@ -1,14 +1,17 @@
 #include <Eigen/Core>
 #include <iostream>
 
+#include "components/evaluation.h"
 #include "components/helpers.h"
 #include "components/initialization.h"
 #include "components/potentials.h"
+#include "components/samplers.h"
 #include "components/solvers.h"
 #include "components/tests.h"
 
 // #define REPORT_1
-#define REPORT_2
+// #define REPORT_2
+#define REPORT_3
 
 // see Rahman for the constant
 const double sigma = 3.4;                       // angstrom
@@ -17,7 +20,7 @@ const double separation = 1.067324157068294;    // 3.63 angstrom in reduced unit
 const uint seed = 8028;
 
 int main() {
-    // Report 1. Dynamics
+// Report 1. Dynamics
 #ifdef REPORT_1
 
     // Potential test
@@ -122,6 +125,49 @@ int main() {
                    "../data/02/positions_wrapped.txt", "x,y,z");
     MD::array2file(velocities, "../data/02/velocities.txt", "vx,vy,vz");
 #endif  // REPORT_2
+
+// Rport 3. Liquid equilibrium
+#ifdef REPORT_3
+    uint n = 10;
+    double time_step = 0.005;
+    uint num_t_steps = 100;
+    uint num_bins = 4;
+    double box_length = n * separation;
+    Eigen::ArrayX3d positions, positions_wrapped, velocities, forces;
+    Eigen::ArrayXXd data = Eigen::ArrayXXd::Zero(num_t_steps, 3 + num_bins);
+    Eigen::VectorXd r_bins;
+    Eigen::VectorXi r_hist;
+    uint num_particles = MD::init_positions_3d(positions, n, separation);
+
+    std::cout << "box length: " << box_length << '\n'
+              << "separation: " << separation << '\n'
+              << "number of particles: " << num_particles
+              << std::endl;
+
+    MD::init_velocities_3d(velocities, num_particles, seed, 3);
+    MD::velocity_drift_removal(velocities);
+    MD::velocity_rescaling(velocities, num_particles, temperature);
+
+    // sampling
+    MD::velocity_verlet(positions,
+                        velocities,
+                        MD::lennard_jones,
+                        time_step,
+                        num_t_steps,
+                        num_particles,
+                        MD::sample_energies_rdf,
+                        data,
+                        box_length,
+                        num_bins);
+    std::cout << "sampling of duration " << time_step * num_t_steps
+              << ", final temperature: "
+              << MD::computeTemperature(velocities) << std::endl;
+
+    // positions_wrapped = positions;
+    // MD::coordinate_wrapping(positions_wrapped, box_length);
+    MD::array2file(data, "../data/03/sim_data.txt", "t,epot,ekin,...");
+
+#endif  // REPORT_3
 
     return 0;
 }
