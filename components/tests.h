@@ -73,7 +73,7 @@ void lj_test2(Eigen::Array<double, Eigen::Dynamic, 5> &data,
 // - side_length: side length of the minium image convention box
 //
 // Description:
-//  Test two argon atoms separated by 3.3 angstrom bouncing in their LJ
+//  Test two argon atoms separated by 10 angstrom bouncing in their LJ
 //  potential computed with the minimal image convention.
 void mic_test(Eigen::ArrayXXd &data,
               double time_step,

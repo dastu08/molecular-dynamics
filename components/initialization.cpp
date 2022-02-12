@@ -71,7 +71,6 @@ void velocity_rescaling(Eigen::ArrayX3d &velocities,
 }
 
 void coordinate_wrapping(Eigen::ArrayX3d &positions,
-                         uint num_particles,
                          double box_length) {
     for (uint i = 0; i < positions.size(); ++i) {
         positions(i) -= box_length * floor(positions(i) / box_length);
