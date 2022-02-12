@@ -1,5 +1,6 @@
 #include <Eigen/Core>
 #include <iostream>
+#include <string>
 
 #include "components/evaluation.h"
 #include "components/helpers.h"
@@ -130,13 +131,13 @@ int main() {
 #ifdef REPORT_3
     uint n = 10;
     double time_step = 0.005;
-    uint num_t_steps = 100;
-    uint num_bins = 4;
+    uint num_t_steps = 1000;
+    uint num_bins = 100;
     double box_length = n * separation;
     Eigen::ArrayX3d positions, positions_wrapped, velocities, forces;
+
+    // init
     Eigen::ArrayXXd data = Eigen::ArrayXXd::Zero(num_t_steps, 3 + num_bins);
-    Eigen::VectorXd r_bins;
-    Eigen::VectorXi r_hist;
     uint num_particles = MD::init_positions_3d(positions, n, separation);
 
     std::cout << "box length: " << box_length << '\n'
@@ -163,9 +164,16 @@ int main() {
               << ", final temperature: "
               << MD::computeTemperature(velocities) << std::endl;
 
-    // positions_wrapped = positions;
-    // MD::coordinate_wrapping(positions_wrapped, box_length);
-    MD::array2file(data, "../data/03/sim_data.txt", "t,epot,ekin,...");
+    // saving
+    positions_wrapped = positions;
+    MD::coordinate_wrapping(positions_wrapped, box_length);
+    
+    
+    std::string head;
+
+    MD::stringList(head, "n", num_bins);
+    // std::cout << head << std::endl;
+    MD::array2file(data, "../data/03/sim_data.txt", "t,epot,ekin," + head);
 
 #endif  // REPORT_3
 
