@@ -29,12 +29,12 @@ void radial_distribution_hist(Eigen::ArrayX3d& positions,
                 xij(k) -= box_length * round(xij(k) / box_length);
             }
 
-            idx = round(xij.norm() / delta_r);
+            idx = floor(xij.norm() / delta_r);
             if (idx > (int)num_bins) {
                 std::cout << "[Error] The computed distance is outside the bin range! Ignoring."
                           << std::endl;
             } else {
-                r_hist(idx) += 2;
+                r_hist(idx) += 1;
             }
         }
     }
