@@ -131,10 +131,11 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      uint),
                      Eigen::ArrayXXd &data,
                      double mic_length,
-                     uint num_bins) {
+                     uint num_bins,
+                     uint index_offset) {
     Eigen::ArrayX3d forces;
     double e_pot;
-    double t = 0;
+    double t = index_offset * time_step;
 
     std::cout << "[Debug] Velocity verlet algorithm with "
               << num_t_steps << " steps."
@@ -150,7 +151,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     // initial energy/force calculation
     e_pot = force(positions, forces, num_particles, mic_length);
     if (sampler != nullptr) {
-        sampler(0, t, positions, velocities, e_pot, data, mic_length, num_bins);
+        sampler(index_offset, t, positions, velocities, e_pot, data, mic_length, num_bins);
     }
 
     // run the integration over time
@@ -165,7 +166,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
         t += time_step;
         // call the sampler to save quantities in data
         if (sampler != nullptr) {
-            sampler(i, t, positions, velocities, e_pot, data, mic_length,
+            sampler(i + index_offset, t, positions, velocities, e_pot, data, mic_length,
                     num_bins);
         }
     }

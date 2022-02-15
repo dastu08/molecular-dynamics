@@ -86,7 +86,8 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      uint),
                      Eigen::ArrayXXd &data,
                      double mic_length,
-                     uint num_bins);
+                     uint num_bins,
+                     uint index_offset = 0);
 }  // namespace MD
 
 #endif  // __SOLVERS_H__
