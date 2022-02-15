@@ -14,11 +14,12 @@
 // #define REPORT_2
 #define REPORT_3
 
-// see Rahman for the constant
-const double sigma = 3.4;                       // angstrom
-const double temperature = 0.7916666666666669;  // 95 K in reduced units
-const double separation = 1.067324157068294;    // 3.63 angstrom in reduced units
 const uint seed = 8028;
+// see Rahman for the constants
+const double sigma = 3.4;                 // angstrom
+const double temperature = 95.0 / 120.0;  // 95 K in reduced units
+const double separation = 1.067;          // 0.822 particle density
+const uint n = 10;                        // particles per axis
 
 int main() {
 // Report 1. Dynamics
@@ -129,12 +130,14 @@ int main() {
 
 // Rport 3. Liquid equilibrium
 #ifdef REPORT_3
-    uint n = 10;
-    double time_step = 0.005;
-    uint num_t_steps = 1000;
-    uint num_bins = 100;
+    double time_step = 0.001;
+    uint num_t_steps = 2000;
+    uint num_bins = 200;
     double box_length = n * separation;
     Eigen::ArrayX3d positions, positions_wrapped, velocities, forces;
+    std::string head;
+
+    MD::stringList(head, "n", num_bins);
 
     // init
     Eigen::ArrayXXd data = Eigen::ArrayXXd::Zero(num_t_steps, 3 + num_bins);
@@ -167,11 +170,7 @@ int main() {
     // saving
     positions_wrapped = positions;
     MD::coordinate_wrapping(positions_wrapped, box_length);
-    
-    
-    std::string head;
 
-    MD::stringList(head, "n", num_bins);
     // std::cout << head << std::endl;
     MD::array2file(data, "../data/03/sim_data.txt", "t,epot,ekin," + head);
 
