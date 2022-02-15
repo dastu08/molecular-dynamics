@@ -7,6 +7,7 @@
 #include "helpers.h"
 #include "initialization.h"
 #include "potentials.h"
+#include "samplers.h"
 #include "solvers.h"
 
 namespace MD {
