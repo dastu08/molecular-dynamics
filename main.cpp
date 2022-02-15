@@ -186,11 +186,6 @@ int main() {
               << ", final temperature: "
               << MD::computeTemperature(velocities) << std::endl;
 
-    // saving
-    // positions_wrapped = positions;
-    // MD::coordinate_wrapping(positions_wrapped, box_length);
-
-    // std::cout << head << std::endl;
     MD::array2file(data,
                    "../data/03/sim_data_n" + std::to_string(n) + ".txt",
                    "t,epot,ekin," + head);
