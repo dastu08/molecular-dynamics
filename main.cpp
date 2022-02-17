@@ -12,7 +12,8 @@
 
 // #define REPORT_1
 // #define REPORT_2
-#define REPORT_3
+// #define REPORT_3
+#define REPORT_4
 
 const uint seed = 8028;
 // see Rahman for the constants
@@ -128,7 +129,7 @@ int main() {
     MD::array2file(velocities, "../data/02/velocities.txt", "vx,vy,vz");
 #endif  // REPORT_2
 
-// Rport 3. Liquid equilibrium
+// Report 3. Liquid equilibrium
 #ifdef REPORT_3
     double time_step = 0.005;
     uint num_t_steps = 2000;
@@ -191,6 +192,71 @@ int main() {
                    "t,epot,ekin," + head);
 
 #endif  // REPORT_3
+
+// Report 4. Results and statistics
+#ifdef REPORT_4
+    double time_step = 0.005;
+    uint num_t_steps = 2000;
+    uint num_bins = 200;
+    uint num_rescales = 10;
+    uint num_rescale_steps = 20;
+    double box_length = n * separation;
+    Eigen::ArrayX3d positions, positions_wrapped, velocities, forces;
+    std::string head;
+
+    MD::stringList(head, "n", num_bins);
+
+    // init
+    Eigen::ArrayXXd data = Eigen::ArrayXXd::Zero(num_t_steps + num_rescale_steps * num_rescales,
+                                                 3 + num_bins);
+    uint num_particles = MD::init_positions_3d(positions, n, separation);
+
+    std::cout << "box length: " << box_length << '\n'
+              << "separation: " << separation << '\n'
+              << "number of particles: " << num_particles
+              << std::endl;
+
+    MD::init_velocities_3d(velocities, num_particles, seed, 3);
+    MD::velocity_drift_removal(velocities);
+
+    // rescaling
+    for (uint i = 0; i < num_rescales; ++i) {
+        MD::velocity_rescaling(velocities, num_particles, temperature);
+        MD::velocity_verlet(positions,
+                            velocities,
+                            MD::lennard_jones,
+                            time_step,
+                            num_rescale_steps,
+                            num_particles,
+                            MD::sample_energies_rdf,
+                            data,
+                            box_length,
+                            num_bins,
+                            i * num_rescale_steps);
+    }
+
+    // sampling
+    MD::velocity_verlet(positions,
+                        velocities,
+                        MD::lennard_jones,
+                        time_step,
+                        num_t_steps,
+                        num_particles,
+                        MD::sample_energies_rdf,
+                        data,
+                        box_length,
+                        num_bins,
+                        num_rescale_steps * num_rescales);
+    std::cout << "sampling of duration " << time_step * num_t_steps
+              << ", final temperature: "
+              << MD::computeTemperature(velocities) << std::endl;
+
+    MD::array2file(data,
+                   "../data/04/sim_data_n" + std::to_string(n) + ".txt",
+                   "t,epot,ekin," + head);
+
+#endif  // REPORT_4
+
 
     return 0;
 }
