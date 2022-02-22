@@ -20,7 +20,7 @@ const uint seed = 8028;
 const double sigma = 3.4;                 // angstrom
 const double temperature = 95.0 / 120.0;  // 95 K in reduced units
 const double separation = 1.067;          // 0.822 particle density
-const uint n = 8;                        // particles per axis
+const uint n = 10;                        // particles per axis
 
 int main() {
 // Report 1. Dynamics
@@ -196,7 +196,7 @@ int main() {
 // Report 4. Results and statistics
 #ifdef REPORT_4
     double time_step = 0.005;
-    uint num_t_steps = 2000;
+    uint num_t_steps = 100000;
     uint num_bins = 200;
     uint num_rescales = 10;
     uint num_rescale_steps = 20;
