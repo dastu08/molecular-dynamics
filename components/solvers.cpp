@@ -73,7 +73,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayXXd &,
                                      double),
                      Eigen::ArrayXXd &data,
-                     double mic_length) {
+                     double box_length) {
     Eigen::ArrayX3d forces;
     double e_pot;
     double t = 0;
@@ -90,9 +90,9 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     }
 
     // initial energy/force calculation
-    e_pot = force(positions, forces, num_particles, mic_length);
+    e_pot = force(positions, forces, num_particles, box_length);
     if (sampler != nullptr) {
-        sampler(0, t, positions, velocities, e_pot, data, mic_length);
+        sampler(0, t, positions, velocities, e_pot, data, box_length);
     }
 
     // run the integration over time
@@ -101,13 +101,13 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
         positions += velocities * time_step + forces * time_step * time_step / 2;
         // add last force term
         velocities += forces * time_step / 2;
-        e_pot = force(positions, forces, num_particles, mic_length);
+        e_pot = force(positions, forces, num_particles, box_length);
         // add current force term
         velocities += forces * time_step / 2;
         t += time_step;
         // call the sampler to save quantities in data
         if (sampler != nullptr) {
-            sampler(i, t, positions, velocities, e_pot, data, mic_length);
+            sampler(i, t, positions, velocities, e_pot, data, box_length);
         }
     }
 }
@@ -130,7 +130,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      double,
                                      uint),
                      Eigen::ArrayXXd &data,
-                     double mic_length,
+                     double box_length,
                      uint num_bins,
                      uint index_offset) {
     Eigen::ArrayX3d forces;
@@ -149,9 +149,9 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
     }
 
     // initial energy/force calculation
-    e_pot = force(positions, forces, num_particles, mic_length);
+    e_pot = force(positions, forces, num_particles, box_length);
     if (sampler != nullptr) {
-        sampler(index_offset, t, positions, velocities, e_pot, data, mic_length, num_bins);
+        sampler(index_offset, t, positions, velocities, e_pot, data, box_length, num_bins);
     }
 
     // run the integration over time
@@ -160,13 +160,13 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
         positions += velocities * time_step + forces * time_step * time_step / 2;
         // add last force term
         velocities += forces * time_step / 2;
-        e_pot = force(positions, forces, num_particles, mic_length);
+        e_pot = force(positions, forces, num_particles, box_length);
         // add current force term
         velocities += forces * time_step / 2;
         t += time_step;
         // call the sampler to save quantities in data
         if (sampler != nullptr) {
-            sampler(i + index_offset, t, positions, velocities, e_pot, data, mic_length,
+            sampler(i + index_offset, t, positions, velocities, e_pot, data, box_length,
                     num_bins);
         }
     }
