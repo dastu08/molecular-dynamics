@@ -15,8 +15,6 @@ void radial_distribution_hist(Eigen::ArrayX3d& positions,
 
     r_hist = Eigen::VectorXi::Zero(num_bins);
 
-    // std::cout << "delta_r = " << delta_r << std::endl;
-
     // loop over i-j pairs of particles.
     for (uint i = 0; i < num_particles; i++) {
         // since i-j  and j-i are equivalent only start from j = i + 1
@@ -30,10 +28,12 @@ void radial_distribution_hist(Eigen::ArrayX3d& positions,
             }
 
             idx = floor(xij.norm() / delta_r);
+            // check if the bin index is valid
             if (idx > (int)num_bins) {
                 std::cout << "[Error] The computed distance is outside the bin range! Ignoring."
                           << std::endl;
             } else {
+                // increase the count of the radial bin
                 r_hist(idx) += 1;
             }
         }
