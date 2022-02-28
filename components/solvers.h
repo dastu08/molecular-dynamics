@@ -5,33 +5,43 @@
 
 namespace MD {
 
-// Veloctiy Verlet integration of equations of motion.
-//
-// Paramters:
-// - positions: array of particle positions of size Nx3, N is the nubmer of
-//  particles
-// - velocities: array of particle velocities, same size as positions
-// - forces: array of the total forces on each particle, same size as positions
-// - force: function with arguments (positions, forces, num_particles) which
-//  computes the forces and returns the potential energy
-// - time_step: step size in time
-// - num_t_steps: number of steps in time, i.e. how often the loop runs
-// - num_particles: number of particles, equivalent to the number of rows of the
-//  arrays positions and forces
-// - sampler: function with parameters
-//  (index, time, positions, velocites, e_pot, data) where the relevant
-//  quantities are written into data
-//  - data: array where the data from the sampler is written to
-//
-// Description:
-//  Starting at time t = 0 integrate equations of motions $mx''(t) = F(t)$ with the
-//  veloctiy verlet algorithm:
-//  $x(t + h) = x(t) + h*v(t) + h^2 * F(t) / (2m)$
-//  $v(t + h) = v(t) + h*(F(t) + F(t + h)) / (2m)$
-//  All quantities are used in reduces units. If the positions are in units of
-//  sigma and the energy in units of epsilon. Then the force needs to be in
-//  units of epsilon/sigma, the velocity will be in units of $\sqrt{epsilon/m}$
-//  and the time is in units $sigma \sqrt{m/epsilon}$.
+/* Veloctiy Verlet integration of equations of motion.
+
+Parameters:
+    * positions: 
+        array of particle positions of size Nx3, N is the nubmer of particles
+    * velocities: 
+        array of particle velocities, same size as positions
+    * forces: 
+        array of the total forces on each particle, same size as positions
+    * force: 
+        function with arguments (positions, forces, num_particles) which
+        computes the forces and returns the potential energy
+    * time_step: 
+        step size in time
+    * num_t_steps: 
+        number of steps in time, i.e. how often the loop runs
+    * num_particles: 
+        number of particles, equivalent to the number of rows of the arrays
+        positions and forces
+    * sampler: 
+        function with parameters (index, time, positions, velocites, e_pot, 
+        data) where the relevant quantities are written into data
+    * data: 
+        array where the data from the sampler is written to
+
+Description:
+    * Starting at time t = 0 integrate equations of motions mx''(t) = F(t) with
+    the veloctiy verlet algorithm:
+    $$
+        x(t + h) = x(t) + h*v(t) + h^2 * F(t) / (2m)
+        v(t + h) = v(t) + h*(F(t) + F(t + h)) / (2m)
+    $$
+    * All quantities are used in reduces units. 
+        * [force] = [energy] / [length]
+        * [velocity] = sqrt([energy] / [mass])
+        * [time] = [length] * sqrt([mass] / [energy])
+*/
 void velocity_verlet(Eigen::ArrayX3d &positions,
                      Eigen::ArrayX3d &velocities,
                      double (*force)(const Eigen::ArrayX3d &,
@@ -48,6 +58,22 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayXXd &),
                      Eigen::ArrayXXd &data);
 
+/* Veloctiy Verlet extended with minimum image convention
+
+Overload Parameters:
+    * force: 
+        function with arguments (positions, forces, num_particles, box_length) 
+        which computes the forces and returns the potential energy
+    * sampler: 
+        function with parameters (index, time, positions, velocites, e_pot, 
+        data, box_length) where the relevant quantities are written into data
+    * box_length:
+        side lenght of the box in the minimum image convention
+
+Description:
+    * Pass the box_length to the force calulation and the sampler function
+    so they can use the minimum image convention.
+*/
 void velocity_verlet(Eigen::ArrayX3d &positions,
                      Eigen::ArrayX3d &velocities,
                      double (*force)(const Eigen::ArrayX3d &,
@@ -65,8 +91,26 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      Eigen::ArrayXXd &,
                                      double),
                      Eigen::ArrayXXd &data,
-                     double mic_length);
+                     double box_length);
 
+/* Veloctiy Verlet extended with radial distribution sampling
+
+Overload Parameters:
+    * sampler: 
+        function with parameters (index, time, positions, velocites, e_pot, 
+        data, box_length, num_bins) where the relevant quantities are written 
+        into data
+    * numb_bins:
+        number of bins used for the radial distribution sampling
+    * index_offset:
+        offset in the number of time steps so the sampling gets corrected time
+        stamps
+
+Description:
+    * Set the initial time according to the index_offset.
+    * Pass the num_bins to the sampler function so it can sample the radial
+    distribution.
+*/
 void velocity_verlet(Eigen::ArrayX3d &positions,
                      Eigen::ArrayX3d &velocities,
                      double (*force)(const Eigen::ArrayX3d &,
@@ -85,7 +129,7 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                                      double,
                                      uint),
                      Eigen::ArrayXXd &data,
-                     double mic_length,
+                     double box_length,
                      uint num_bins,
                      uint index_offset = 0);
 }  // namespace MD

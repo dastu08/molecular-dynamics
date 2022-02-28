@@ -5,4 +5,5 @@ add_library(components STATIC
             solvers.cpp 
             initialization.cpp
             evaluation.cpp
-            samplers.cpp)
+            samplers.cpp
+            classes.cpp)
