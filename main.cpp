@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 
+#include "components/classes.h"
 #include "components/evaluation.h"
 #include "components/helpers.h"
 #include "components/initialization.h"
@@ -13,14 +14,14 @@
 // #define REPORT_1
 // #define REPORT_2
 // #define REPORT_3
-#define REPORT_4
+// #define REPORT_4
 
 const uint seed = 8028;
 // see Rahman for the constants
 const double sigma = 3.4;                 // angstrom
 const double temperature = 95.0 / 120.0;  // 95 K in reduced units
 const double separation = 1.067;          // 0.822 particle density
-const uint n = 10;                        // particles per axis
+const uint n = 8;                        // particles per axis
 
 int main() {
 // Report 1. Dynamics
@@ -257,6 +258,16 @@ int main() {
 
 #endif  // REPORT_4
 
+    MD::Simulation sim = MD::Simulation(n,
+                                        0.005,
+                                        100,
+                                        n * separation,
+                                        10,
+                                        20);
+    sim.init(separation, temperature, seed);
+    sim.printInfo();
+    sim.run();
+    sim.export2file("../data/04/test_file");
 
     return 0;
 }
