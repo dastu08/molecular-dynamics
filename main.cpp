@@ -15,13 +15,15 @@
 // #define REPORT_2
 // #define REPORT_3
 // #define REPORT_4
+#define REPORT_5
 
 const uint seed = 8028;
 // see Rahman for the constants
 const double sigma = 3.4;                 // angstrom
 const double temperature = 95.0 / 120.0;  // 95 K in reduced units
 const double separation = 1.067;          // 0.822 particle density
-const uint n = 8;                        // particles per axis
+const uint n = 5;                         // particles per axis
+double box_length = n * separation;
 
 int main() {
 // Report 1. Dynamics
@@ -258,16 +260,27 @@ int main() {
 
 #endif  // REPORT_4
 
-    MD::Simulation sim = MD::Simulation(n,
-                                        0.005,
-                                        100,
-                                        n * separation,
-                                        10,
-                                        20);
-    sim.init(separation, temperature, seed);
+    // MD::Simulation sim = MD::Simulation(n,
+    //                                     0.005,
+    //                                     100,
+    //                                     n * separation,
+    //                                     10,
+    //                                     20);
+    // sim.init(separation, temperature, seed);
+    // sim.printInfo();
+    // sim.run();
+    // sim.export2file("../data/04/test_file");
+
+// Report 5. Metropolis Monte Carlo
+#ifdef REPORT_5
+    MC::Simulation sim = MC::Simulation(n, 125*10000, box_length, temperature);
+
+    sim.init(separation, seed);
     sim.printInfo();
     sim.run();
-    sim.export2file("../data/04/test_file");
+    // sim.export2file("../data/04/mc_");
+
+#endif  // REPORT_5
 
     return 0;
 }

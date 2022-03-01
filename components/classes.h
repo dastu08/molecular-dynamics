@@ -110,4 +110,96 @@ class Simulation {
 
 }  // namespace MD
 
+namespace MC {
+
+class Simulation {
+   private:
+    uint n;
+    uint num_particles = 0;
+    uint num_samples;
+    uint num_bins;
+    uint seed;
+    double box_length;
+    double temperature;
+    double separation = 0;
+
+    Eigen::ArrayX3d positions;
+    Eigen::ArrayX3d forces;
+    Eigen::ArrayXXd data;
+
+    uint initialzedFlag = 0;
+
+   public:
+    /* Set the simulation parameters
+
+    Parameters:
+        * n:
+            number of particles per dimension
+        * num_samples:
+            number of samples to generate with Metropolis
+        * box_length:
+            side length of the spacial box of the particles
+        * temperature:
+            target temperature for acceptance criterion in Metropolis
+        * num_bins:
+            number of bins for the radial distribution sampling
+
+    Description:
+        * Copy the values to the internal variables.
+    */
+    Simulation(uint n,
+               uint num_samples,
+               double box_length,
+               double temperature,
+               uint num_bins = 200);
+    ~Simulation() {}
+
+    /* Print the simulation parameters
+
+    Description:
+        * Print the values of the internal variables which were set by the
+        constructor.
+    */
+    void printInfo();
+
+    /* Initialize positions, velocities and data arrays
+
+    Parameters:
+        * separation:
+            initial particles separation along each spacial dimension
+        * seed:
+            TODO
+
+    Description:
+        * Set the data array to zero but with the correct size.
+        * Initialize the positions and update the number of particles.
+        * Set initializedFlag to 1.
+    */
+    void init(double separation, uint seed);
+
+    /* Run the time integration
+
+    Description:
+        * Check for initializedFlag to be 1.
+        *
+        * Print information after finishing the run.
+    */
+    void run();
+
+    /* Save sampled data to file
+
+    Parameters:
+        * filepath:
+            path and file prefix for the file where the data will be written to
+
+    Description:
+        * Create the header string for the radial distribuation bins.
+        * Save the data array to the file specified by the file path, append
+        the value of n to it.
+    */
+    void export2file(std::string filepath);
+};
+
+}  // namespace MC
+
 #endif  // __CLASSES_H__

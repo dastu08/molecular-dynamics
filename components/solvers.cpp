@@ -1,5 +1,7 @@
 #include "solvers.h"
 
+#include <stdlib.h>
+
 #include <iostream>
 
 namespace MD {
@@ -173,3 +175,28 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 }
 
 }  // namespace MD
+
+namespace MC {
+
+void metropolis(Eigen::ArrayX3d &positions,
+                uint num_samples,
+                uint num_particles,
+                uint seed,
+                void (*sampler)(),
+                Eigen::ArrayXXd &data,
+                double box_length,
+                uint num_bins,
+                uint index_offset) {
+    // init the random number generator
+    srand(seed);
+    uint particle;
+
+    for (uint i = 0; i < num_samples; ++i) {
+        particle = rand() % num_particles;
+        data(i, 0) = i;
+        data(i, 1) = particle;
+        // std::cout << "particle : " << particle << std::endl;
+    }
+}
+
+}  // namespace MC

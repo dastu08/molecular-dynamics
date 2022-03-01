@@ -8,26 +8,26 @@ namespace MD {
 /* Veloctiy Verlet integration of equations of motion.
 
 Parameters:
-    * positions: 
+    * positions:
         array of particle positions of size Nx3, N is the nubmer of particles
-    * velocities: 
+    * velocities:
         array of particle velocities, same size as positions
-    * forces: 
+    * forces:
         array of the total forces on each particle, same size as positions
-    * force: 
+    * force:
         function with arguments (positions, forces, num_particles) which
         computes the forces and returns the potential energy
-    * time_step: 
+    * time_step:
         step size in time
-    * num_t_steps: 
+    * num_t_steps:
         number of steps in time, i.e. how often the loop runs
-    * num_particles: 
+    * num_particles:
         number of particles, equivalent to the number of rows of the arrays
         positions and forces
-    * sampler: 
-        function with parameters (index, time, positions, velocites, e_pot, 
+    * sampler:
+        function with parameters (index, time, positions, velocites, e_pot,
         data) where the relevant quantities are written into data
-    * data: 
+    * data:
         array where the data from the sampler is written to
 
 Description:
@@ -37,7 +37,7 @@ Description:
         x(t + h) = x(t) + h*v(t) + h^2 * F(t) / (2m)
         v(t + h) = v(t) + h*(F(t) + F(t + h)) / (2m)
     $$
-    * All quantities are used in reduces units. 
+    * All quantities are used in reduces units.
         * [force] = [energy] / [length]
         * [velocity] = sqrt([energy] / [mass])
         * [time] = [length] * sqrt([mass] / [energy])
@@ -61,11 +61,11 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 /* Veloctiy Verlet extended with minimum image convention
 
 Overload Parameters:
-    * force: 
-        function with arguments (positions, forces, num_particles, box_length) 
+    * force:
+        function with arguments (positions, forces, num_particles, box_length)
         which computes the forces and returns the potential energy
-    * sampler: 
-        function with parameters (index, time, positions, velocites, e_pot, 
+    * sampler:
+        function with parameters (index, time, positions, velocites, e_pot,
         data, box_length) where the relevant quantities are written into data
     * box_length:
         side lenght of the box in the minimum image convention
@@ -96,9 +96,9 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 /* Veloctiy Verlet extended with radial distribution sampling
 
 Overload Parameters:
-    * sampler: 
-        function with parameters (index, time, positions, velocites, e_pot, 
-        data, box_length, num_bins) where the relevant quantities are written 
+    * sampler:
+        function with parameters (index, time, positions, velocites, e_pot,
+        data, box_length, num_bins) where the relevant quantities are written
         into data
     * numb_bins:
         number of bins used for the radial distribution sampling
@@ -133,5 +133,19 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
                      uint num_bins,
                      uint index_offset = 0);
 }  // namespace MD
+
+namespace MC {
+
+void metropolis(Eigen::ArrayX3d &positions,
+                uint num_samples,
+                uint num_particles,
+                uint seed,
+                void (*sampler)(),
+                Eigen::ArrayXXd &data,
+                double box_length,
+                uint num_bins,
+                uint index_offset = 0);
+
+}  // namespace MC
 
 #endif  // __SOLVERS_H__
