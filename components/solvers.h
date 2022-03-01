@@ -136,20 +136,54 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 
 namespace MC {
 
+/* Perform a trial move on the positions
+
+Parameters:
+    * positions:
+        Nx3 array of the positions, has rows as N=num_particles
+    * num_particles:
+        number of particles of the system, number of rows of positions
+    * step_size:
+        steps size for the random movement
+
+Description:
+    * Pick a random particle.
+    * Move the particle in a random direction inside the box
+        [-step_size, step_size]^3 around the previous position.
+    * Override the particles position in positions array.
+*/
+void move(Eigen::ArrayX3d &positions,
+          uint num_particles,
+          double step_size);
+
+/* Metropolis Monte Carlo algorithm
+
+Parameters:
+    * positions:
+    * potential:
+    * num_samples:
+    * num_particles:
+    * step_size:
+    * beta:
+    * seed:
+    * sampler:
+    * data:
+    * box_length:
+    * num_bins:
+    * index_offset
+ */
 void metropolis(Eigen::ArrayX3d &positions,
+                double (*potential)(const Eigen::ArrayX3d &, uint, double),
                 uint num_samples,
                 uint num_particles,
+                double step_size,
+                double beta,
                 uint seed,
                 void (*sampler)(),
                 Eigen::ArrayXXd &data,
                 double box_length,
                 uint num_bins,
                 uint index_offset = 0);
-
-Eigen::Vector3d move(Eigen::ArrayX3d &positions_old,
-                     Eigen::ArrayX3d &postions_new,
-                     uint num_particles,
-                     double step_size);
 
 }  // namespace MC
 

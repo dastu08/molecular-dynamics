@@ -1,5 +1,6 @@
 #include "solvers.h"
 
+#include <math.h>
 #include <stdlib.h>
 
 #include <iostream>
@@ -180,25 +181,27 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 
 namespace MC {
 
-Eigen::Vector3d move(Eigen::ArrayX3d &positions_old,
-                     Eigen::ArrayX3d &postions_new,
-                     uint num_particles,
-                     double step_size) {
+void move(Eigen::ArrayX3d &positions,
+          uint num_particles,
+          double step_size) {
     //   select a random particle
     uint particle = rand() % num_particles;
-
     Eigen::Vector3d delta;
 
-    delta(0) = step_size * MC::random_double();
-    delta(1) = step_size * MC::random_double();
-    delta(2) = step_size * MC::random_double();
+    delta(0) = step_size * MC::random_double_2();
+    delta(1) = step_size * MC::random_double_2();
+    delta(2) = step_size * MC::random_double_2();
+    // move the particle in a random direction
 
-    return delta;
+    positions.row(particle) += delta.transpose().array();
 }
 
 void metropolis(Eigen::ArrayX3d &positions,
+                double (*potential)(const Eigen::ArrayX3d &, uint, double),
                 uint num_samples,
                 uint num_particles,
+                double step_size,
+                double beta,
                 uint seed,
                 void (*sampler)(),
                 Eigen::ArrayXXd &data,
@@ -207,19 +210,46 @@ void metropolis(Eigen::ArrayX3d &positions,
                 uint index_offset) {
     // init the random number generator
     srand(seed);
-    uint particle;
-    Eigen::Vector3d delta;
+    double reference, relative_probability, accpetance_rate;
+    double energy_new, energy_old;
+    uint accpetance_count = 0;
+    Eigen::ArrayX3d positions_old = positions;
+
+    // initial energy
+    energy_old = potential(positions, num_particles, box_length);
 
     for (uint i = 0; i < num_samples; ++i) {
-        // particle = rand() % num_particles;
-        delta = move(positions, positions, num_particles, 0.4);
-        data(i, 0) = i;
-        data(i, 1) = delta(0);
-        data(i, 2) = delta(1);
-        data(i, 3) = delta(2);
+        // trial move and compute the new energy
+        // std::cout << positions.rows() << ',' << positions.cols() << std::endl;
+        move(positions, num_particles, step_size);
 
-        // std::cout << "particle : " << particle << std::endl;
+        energy_new = potential(positions, num_particles, box_length);
+
+        // accept the new configuration?
+        reference = MC::random_double_1();
+        relative_probability = exp(-beta * (energy_new - energy_old));
+        // acceptance rate: min(1, relative_probability)
+        if (relative_probability > reference) {
+            // count the number of new accepted configuations
+            ++accpetance_count;
+            // update the energy for the next move
+            energy_old = energy_new;
+            // keep a copy of the configuration
+            positions_old = positions;
+            std::cout << "accepted energy: " << energy_new
+                      << std::endl;
+        } else {
+            // keep the old energy
+            energy_new = energy_old;
+            // reset the positions
+            positions = positions_old;
+            std::cout << "rejected energy: " << energy_new
+                      << std::endl;
+        }
     }
+
+    accpetance_rate = (double)accpetance_count / (double)num_samples;
+    std::cout << "acceptance rate: " << accpetance_rate << std::endl;
 }
 
 }  // namespace MC
