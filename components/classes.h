@@ -119,8 +119,10 @@ class Simulation {
     uint num_samples;
     uint num_bins;
     uint seed;
+    double step_size;
     double box_length;
     double temperature;
+    double beta;
     double separation = 0;
 
     Eigen::ArrayX3d positions;
@@ -137,6 +139,8 @@ class Simulation {
             number of particles per dimension
         * num_samples:
             number of samples to generate with Metropolis
+        * step_size:
+            TODO
         * box_length:
             side length of the spacial box of the particles
         * temperature:
@@ -149,6 +153,7 @@ class Simulation {
     */
     Simulation(uint n,
                uint num_samples,
+               double step_size,
                double box_length,
                double temperature,
                uint num_bins = 200);

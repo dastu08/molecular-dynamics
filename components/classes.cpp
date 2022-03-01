@@ -116,13 +116,16 @@ namespace MC {
 
 Simulation::Simulation(uint n,
                        uint num_samples,
+                       double step_size,
                        double box_length,
                        double temperature,
                        uint num_bins) {
     this->n = n;
     this->num_samples = num_samples;
+    this->step_size = step_size;
     this->box_length = box_length;
     this->temperature = temperature;
+    this->beta = 1 / temperature;
     this->num_bins = num_bins;
 
     initialzedFlag = 0;
@@ -132,6 +135,9 @@ void Simulation::printInfo() {
     std::cout << "[Info] MC Simulation Information\n"
               << "# particles \t\t: " << num_particles << '\n'
               << "# samplings \t\t: " << num_samples << '\n'
+              << "step size \t\t: " << step_size << '\n'
+              << "temperauture \t\t: " << temperature << '\n'
+              << "beta \t\t\t: " << beta << '\n'
               << "separation \t\t: " << separation << '\n'
               << "box length \t\t: " << box_length << '\n'
               << "# bins \t\t\t: " << num_bins << '\n'
@@ -140,14 +146,15 @@ void Simulation::printInfo() {
 }
 
 void Simulation::init(double separation, uint seed) {
+    this->seed = seed;
+    this->separation = separation;
+
     // set size for data array
     // data = Eigen::ArrayXXd::Zero(num_samples, 3 + num_bins);
     data = Eigen::ArrayXXd::Zero(num_samples, 4);
 
     //  initi positions and velocities
     num_particles = MD::init_positions_3d(positions, n, separation);
-
-    this->seed = seed;
 
     // set flag to ready
     initialzedFlag = 1;
@@ -162,14 +169,22 @@ void Simulation::run() {
         return;
     }
 
-    MC::metropolis(positions, num_samples, num_particles, seed,
-                   nullptr, data, box_length, num_bins);
+    MC::metropolis(positions,
+                   MC::lennard_jones,
+                   num_samples,
+                   num_particles,
+                   step_size,
+                   beta,
+                   seed,
+                   nullptr,
+                   data,
+                   box_length,
+                   num_bins);
 
-    MD::array2file(data, "../data/05/hist.txt", "idx,x1,x2,x3");
-    // std::cout << "[Info] Finished simulation of duration "
-    //           << time_step * num_t_steps
-    //           << " at final temperature: "
-    //           << MD::computeTemperature(velocities) << std::endl;
+    // MD::array2file(data, "../data/05/hist.txt", "idx,x1,x2,x3");
+    std::cout << "[Info] Finished simulation of "
+              << num_samples
+              << " samples." << std::endl;
 }
 
 void Simulation::export2file(std::string filepath) {

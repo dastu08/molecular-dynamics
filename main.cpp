@@ -273,12 +273,12 @@ int main() {
 
 // Report 5. Metropolis Monte Carlo
 #ifdef REPORT_5
-    MC::Simulation sim = MC::Simulation(n, 125*10000, box_length, temperature);
+    MC::Simulation sim = MC::Simulation(n, 10, 0.05, box_length, temperature);
 
     sim.init(separation, seed);
     sim.printInfo();
     sim.run();
-    // sim.export2file("../data/04/mc_");
+    // sim.export2file("../data/04/mc_")ee;
 
 #endif  // REPORT_5
 
