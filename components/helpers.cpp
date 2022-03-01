@@ -37,7 +37,7 @@ void stringList(std::string &string, std::string symbol, uint repetition) {
     for (uint i = 0; i < repetition; ++i) {
         string.append(symbol + std::to_string(i) + ',');
     }
-    string.erase(string.end()-1);
+    string.erase(string.end() - 1);
 }
 
 }  // namespace MD
