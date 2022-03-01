@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "helpers.h"
+
 namespace MD {
 
 void velocity_verlet(Eigen::ArrayX3d &positions,
@@ -178,6 +180,22 @@ void velocity_verlet(Eigen::ArrayX3d &positions,
 
 namespace MC {
 
+Eigen::Vector3d move(Eigen::ArrayX3d &positions_old,
+                     Eigen::ArrayX3d &postions_new,
+                     uint num_particles,
+                     double step_size) {
+    //   select a random particle
+    uint particle = rand() % num_particles;
+
+    Eigen::Vector3d delta;
+
+    delta(0) = step_size * MC::random_double();
+    delta(1) = step_size * MC::random_double();
+    delta(2) = step_size * MC::random_double();
+
+    return delta;
+}
+
 void metropolis(Eigen::ArrayX3d &positions,
                 uint num_samples,
                 uint num_particles,
@@ -190,11 +208,16 @@ void metropolis(Eigen::ArrayX3d &positions,
     // init the random number generator
     srand(seed);
     uint particle;
+    Eigen::Vector3d delta;
 
     for (uint i = 0; i < num_samples; ++i) {
-        particle = rand() % num_particles;
+        // particle = rand() % num_particles;
+        delta = move(positions, positions, num_particles, 0.4);
         data(i, 0) = i;
-        data(i, 1) = particle;
+        data(i, 1) = delta(0);
+        data(i, 2) = delta(1);
+        data(i, 3) = delta(2);
+
         // std::cout << "particle : " << particle << std::endl;
     }
 }

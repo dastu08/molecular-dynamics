@@ -146,6 +146,11 @@ void metropolis(Eigen::ArrayX3d &positions,
                 uint num_bins,
                 uint index_offset = 0);
 
+Eigen::Vector3d move(Eigen::ArrayX3d &positions_old,
+                     Eigen::ArrayX3d &postions_new,
+                     uint num_particles,
+                     double step_size);
+
 }  // namespace MC
 
 #endif  // __SOLVERS_H__

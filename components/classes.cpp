@@ -142,7 +142,7 @@ void Simulation::printInfo() {
 void Simulation::init(double separation, uint seed) {
     // set size for data array
     // data = Eigen::ArrayXXd::Zero(num_samples, 3 + num_bins);
-    data = Eigen::ArrayXXd::Zero(num_samples, 2);
+    data = Eigen::ArrayXXd::Zero(num_samples, 4);
 
     //  initi positions and velocities
     num_particles = MD::init_positions_3d(positions, n, separation);
@@ -165,7 +165,7 @@ void Simulation::run() {
     MC::metropolis(positions, num_samples, num_particles, seed,
                    nullptr, data, box_length, num_bins);
 
-    MD::array2file(data, "../data/05/hist.txt", "idx,particle");
+    MD::array2file(data, "../data/05/hist.txt", "idx,x1,x2,x3");
     // std::cout << "[Info] Finished simulation of duration "
     //           << time_step * num_t_steps
     //           << " at final temperature: "
