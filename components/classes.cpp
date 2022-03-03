@@ -136,7 +136,7 @@ void Simulation::printInfo() {
               << "# particles \t\t: " << num_particles << '\n'
               << "# samplings \t\t: " << num_samples << '\n'
               << "step size \t\t: " << step_size << '\n'
-              << "temperauture \t\t: " << temperature << '\n'
+              << "temperature \t\t: " << temperature << '\n'
               << "beta \t\t\t: " << beta << '\n'
               << "separation \t\t: " << separation << '\n'
               << "box length \t\t: " << box_length << '\n'
