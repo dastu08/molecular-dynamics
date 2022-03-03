@@ -22,7 +22,7 @@ const uint seed = 8028;
 const double sigma = 3.4;                 // angstrom
 const double temperature = 95.0 / 120.0;  // 95 K in reduced units
 const double separation = 1.067;          // 0.822 particle density
-const uint n = 5;                         // particles per axis
+const uint n = 10;                        // particles per axis
 double box_length = n * separation;
 
 int main() {
