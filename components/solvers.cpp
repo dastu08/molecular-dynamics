@@ -224,7 +224,7 @@ void metropolis(Eigen::ArrayX3d &positions,
     double energy_new, energy_old;
     uint accpetance_count = 0;
     Eigen::ArrayX3d positions_old = positions;
-    Eigen::VectorXi r_hist;
+    Eigen::VectorXi r_hist_new, r_hist_old;
 
     std::cout << "[Debug] Metropolis algorithm with "
               << num_samples << " sampling steps."
@@ -234,14 +234,16 @@ void metropolis(Eigen::ArrayX3d &positions,
     energy_old = potential(positions,
                            num_particles,
                            box_length,
-                           r_hist,
+                           r_hist_old,
                            num_bins);
+
+    // std::cout << r_hist_old.transpose() << std::endl;
 
     if (sampler != nullptr) {
         sampler(index_offset,
                 positions,
                 energy_old,
-                r_hist,
+                r_hist_old,
                 data,
                 box_length,
                 num_bins);
@@ -255,8 +257,9 @@ void metropolis(Eigen::ArrayX3d &positions,
         energy_new = potential(positions,
                                num_particles,
                                box_length,
-                               r_hist,
+                               r_hist_new,
                                num_bins);
+        // std::cout << r_hist_new.transpose() << std::endl;
 
         // accept the new configuration?
         reference = MC::random_double_1();
@@ -265,14 +268,16 @@ void metropolis(Eigen::ArrayX3d &positions,
         if (relative_probability > reference) {
             // count the number of new accepted configuations
             ++accpetance_count;
-            // update the energy for the next move
+            // update the energy/r_hist for the next move
             energy_old = energy_new;
+            r_hist_old = r_hist_new;
             // keep a copy of the configuration
             positions_old = positions;
             // std::cout << "accepted energy: " << energy_new << std::endl;
         } else {
-            // keep the old energy
+            // keep the old energy/rdf
             energy_new = energy_old;
+            r_hist_new = r_hist_old;
             // reset the positions
             positions = positions_old;
             // std::cout << "rejected energy: " << energy_new << std::endl;
@@ -282,7 +287,7 @@ void metropolis(Eigen::ArrayX3d &positions,
             sampler(i + index_offset,
                     positions,
                     energy_old,
-                    r_hist,
+                    r_hist_old,
                     data,
                     box_length,
                     num_bins);
