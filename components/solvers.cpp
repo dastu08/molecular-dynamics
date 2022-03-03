@@ -191,19 +191,29 @@ void move(Eigen::ArrayX3d &positions,
     delta(0) = step_size * MC::random_double_2();
     delta(1) = step_size * MC::random_double_2();
     delta(2) = step_size * MC::random_double_2();
-    // move the particle in a random direction
 
+    // move the particle in a random direction
     positions.row(particle) += delta.transpose().array();
 }
 
 void metropolis(Eigen::ArrayX3d &positions,
-                double (*potential)(const Eigen::ArrayX3d &, uint, double),
+                double (*potential)(const Eigen::ArrayX3d &,
+                                    uint,
+                                    double,
+                                    Eigen::VectorXi &,
+                                    double),
                 uint num_samples,
                 uint num_particles,
                 double step_size,
                 double beta,
                 uint seed,
-                void (*sampler)(),
+                void (*sampler)(uint,
+                                Eigen::ArrayX3d &,
+                                double,
+                                Eigen::VectorXi &,
+                                Eigen::ArrayXXd &,
+                                double,
+                                uint),
                 Eigen::ArrayXXd &data,
                 double box_length,
                 uint num_bins,
@@ -214,16 +224,39 @@ void metropolis(Eigen::ArrayX3d &positions,
     double energy_new, energy_old;
     uint accpetance_count = 0;
     Eigen::ArrayX3d positions_old = positions;
+    Eigen::VectorXi r_hist;
+
+    std::cout << "[Debug] Metropolis algorithm with "
+              << num_samples << " sampling steps."
+              << std::endl;
 
     // initial energy
-    energy_old = potential(positions, num_particles, box_length);
+    energy_old = potential(positions,
+                           num_particles,
+                           box_length,
+                           r_hist,
+                           num_bins);
+
+    if (sampler != nullptr) {
+        sampler(index_offset,
+                positions,
+                energy_old,
+                r_hist,
+                data,
+                box_length,
+                num_bins);
+    }
 
     for (uint i = 0; i < num_samples; ++i) {
         // trial move and compute the new energy
         // std::cout << positions.rows() << ',' << positions.cols() << std::endl;
         move(positions, num_particles, step_size);
 
-        energy_new = potential(positions, num_particles, box_length);
+        energy_new = potential(positions,
+                               num_particles,
+                               box_length,
+                               r_hist,
+                               num_bins);
 
         // accept the new configuration?
         reference = MC::random_double_1();
@@ -236,20 +269,29 @@ void metropolis(Eigen::ArrayX3d &positions,
             energy_old = energy_new;
             // keep a copy of the configuration
             positions_old = positions;
-            std::cout << "accepted energy: " << energy_new
-                      << std::endl;
+            // std::cout << "accepted energy: " << energy_new << std::endl;
         } else {
             // keep the old energy
             energy_new = energy_old;
             // reset the positions
             positions = positions_old;
-            std::cout << "rejected energy: " << energy_new
-                      << std::endl;
+            // std::cout << "rejected energy: " << energy_new << std::endl;
+        }
+
+        if (sampler != nullptr) {
+            sampler(i + index_offset,
+                    positions,
+                    energy_old,
+                    r_hist,
+                    data,
+                    box_length,
+                    num_bins);
         }
     }
 
     accpetance_rate = (double)accpetance_count / (double)num_samples;
-    std::cout << "acceptance rate: " << accpetance_rate << std::endl;
+    std::cout << "[Debug] Metropolis acceptance rate: "
+              << accpetance_rate << std::endl;
 }
 
 }  // namespace MC

@@ -150,8 +150,8 @@ void Simulation::init(double separation, uint seed) {
     this->separation = separation;
 
     // set size for data array
-    // data = Eigen::ArrayXXd::Zero(num_samples, 3 + num_bins);
-    data = Eigen::ArrayXXd::Zero(num_samples, 4);
+    data = Eigen::ArrayXXd::Zero(num_samples, 2 + num_bins);
+    // data = Eigen::ArrayXXd::Zero(num_samples, 4);
 
     //  initi positions and velocities
     num_particles = MD::init_positions_3d(positions, n, separation);
@@ -170,13 +170,13 @@ void Simulation::run() {
     }
 
     MC::metropolis(positions,
-                   MC::lennard_jones,
+                   MC::lennard_jones_rdf,
                    num_samples,
                    num_particles,
                    step_size,
                    beta,
                    seed,
-                   nullptr,
+                   MC::sample_energies_rdf,
                    data,
                    box_length,
                    num_bins);
@@ -192,10 +192,10 @@ void Simulation::export2file(std::string filepath) {
     // create the header string for the bins
     MD::stringList(head, "n", num_bins);
 
-    // save the sampled data (t, epot, ekin, n0, ...) to a file
+    // save the sampled data (index, epot, n0, ...) to a file
     MD::array2file(data,
                    filepath + std::to_string(n) + ".txt",
-                   "t,epot,ekin," + head);
+                   "index,epot," + head);
 }
 
 }  // namespace MC
