@@ -47,7 +47,7 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
 
 namespace MC {
 
-/* Compute the LJ energy for N particles in 3 dimensions.
+/* Compute the LJ energy and RDF for N particles in 3 dimensions.
 
 Parameters:
     * positions:
@@ -57,6 +57,10 @@ Parameters:
         array
     * side_length:
         side length of the box for the minimum image convention
+    * r_hist:
+        vector for containing the histogram counts of the radial bins
+    * num_bins:
+        number of bins in the radial distribution, length of r_hist
 
 Description:
     * For each particle pair compute relative distance.
@@ -66,10 +70,13 @@ Description:
     * Add everything up to the total potential energy of the system.
     * positions in units of sigma.
     * energy in units of epsilon.
+    * Count the distances in bins for a radius from 0 to box_length.
 */
-double lennard_jones(const Eigen::ArrayX3d &positions,
-                     uint num_particles,
-                     double side_length);
+double lennard_jones_rdf(const Eigen::ArrayX3d &positions,
+                         uint num_particles,
+                         double side_length,
+                         Eigen::VectorXi &r_hist,
+                         double num_bins);
 }  // namespace MC
 
 #endif  // __POTENTIALS_H__
