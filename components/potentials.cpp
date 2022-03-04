@@ -89,19 +89,13 @@ double lennard_jones(const Eigen::ArrayX3d &positions,
 
 namespace MC {
 
-double lennard_jones_rdf(const Eigen::ArrayX3d &positions,
-                         uint num_particles,
-                         double side_length,
-                         Eigen::VectorXi &r_hist,
-                         double num_bins) {
+double lennard_jones(const Eigen::ArrayX3d &positions,
+                     uint num_particles,
+                     double side_length) {
     double energy_total = 0;
     // auxiliary variables
     double r2_inv, r6_inv;
     Eigen::Vector3d xij;
-    // radial distribution needs this
-    double delta_r = side_length / num_bins;
-    int idx;
-    r_hist = Eigen::VectorXi::Zero(num_bins);
 
     // loop over i-j pairs of particles.
     for (uint i = 0; i < num_particles; i++) {
@@ -122,17 +116,6 @@ double lennard_jones_rdf(const Eigen::ArrayX3d &positions,
             // add the potential energy of the pair to the total energy
             // only once because it already incorporates the pair of particles
             energy_total += 4 * r6_inv * (r6_inv - 1);
-
-            // radial distribution calcualtion
-            idx = floor(xij.norm() / delta_r);
-            // check if the bin index is valid
-            if (idx > (int)num_bins) {
-                std::cout << "[Error] The computed distance is outside the bin range! Ignoring."
-                          << std::endl;
-            } else {
-                // increase the count of the radial bin
-                r_hist(idx) += 1;
-            }
         }
     }
 
@@ -147,6 +130,13 @@ double lennard_jones_single(const Eigen::ArrayX3d &positions,
     // auxiliary variables
     double r2_inv, r6_inv;
     Eigen::Vector3d xij;
+
+    if (particle >= num_particles) {
+        std::cout << "[Warning] The selected particle does not exist:"
+                  << particle << "but only " << num_particles << "particles."
+                  << "Aborting the energy calculation!" << std::endl;
+        return 0;
+    }
 
     // loop over the other particles
     for (uint i = 0; i < num_particles; i++) {

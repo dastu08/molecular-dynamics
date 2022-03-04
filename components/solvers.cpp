@@ -5,9 +5,7 @@
 
 #include <iostream>
 
-#include "evaluation.h"
 #include "helpers.h"
-#include "potentials.h"
 
 namespace MD {
 
@@ -203,9 +201,11 @@ uint move(Eigen::ArrayX3d &positions,
 void metropolis(Eigen::ArrayX3d &positions,
                 double (*potential)(const Eigen::ArrayX3d &,
                                     uint,
-                                    double,
-                                    Eigen::VectorXi &,
                                     double),
+                double (*potential_single)(const Eigen::ArrayX3d &,
+                                           uint,
+                                           double,
+                                           uint),
                 uint num_samples,
                 uint num_particles,
                 double step_size,
@@ -221,6 +221,10 @@ void metropolis(Eigen::ArrayX3d &positions,
                 Eigen::ArrayXXd &data,
                 double box_length,
                 uint num_bins,
+                void (*radial_hist)(Eigen::ArrayX3d &,
+                                    Eigen::VectorXi &,
+                                    uint,
+                                    double),
                 uint index_offset) {
     // init the random number generator
     srand(seed);
@@ -236,11 +240,9 @@ void metropolis(Eigen::ArrayX3d &positions,
               << std::endl;
 
     // initial energy
-    energy_tot = potential(positions,
-                           num_particles,
-                           box_length,
-                           r_hist,
-                           num_bins);
+    energy_tot = potential(positions, num_particles, box_length);
+    // initial RDF
+    radial_hist(positions, r_hist, num_bins, box_length);
 
     if (sampler != nullptr) {
         sampler(index_offset,
@@ -255,16 +257,8 @@ void metropolis(Eigen::ArrayX3d &positions,
     for (uint i = 0; i < num_samples; ++i) {
         // trial move and compute the new energy
         particle = move(positions, num_particles, step_size);
-        energy_old = MC::lennard_jones_single(positions_old, num_particles, box_length, particle);
-        energy_new = MC::lennard_jones_single(positions, num_particles, box_length, particle);
-
-        // compute the total initial energy
-        // energy_new = potential(positions,
-        //                        num_particles,
-        //                        box_length,
-        //                        r_hist_new,
-        //                        num_bins);
-        // std::cout << r_hist_new.transpose() << std::endl;
+        energy_old = potential_single(positions_old, num_particles, box_length, particle);
+        energy_new = potential_single(positions, num_particles, box_length, particle);
 
         // accept the new configuration?
         reference = MC::random_double_1();
@@ -275,17 +269,12 @@ void metropolis(Eigen::ArrayX3d &positions,
             ++accpetance_count;
             // update the energy/r_hist for the next move
             energy_tot += energy_new - energy_old;
-            // energy_old = energy_new;
-            // r_hist_old = r_hist_new;
-            MD::radial_distribution_hist(positions, r_hist, num_bins, box_length);
+            radial_hist(positions, r_hist, num_bins, box_length);
 
             // keep a copy of the configuration
             positions_old = positions;
             // std::cout << "accepted energy: " << energy_new << std::endl;
         } else {
-            // keep the old energy/rdf
-            // energy_new = energy_old;
-            // r_hist_new = r_hist_old;
             // reset the positions
             positions = positions_old;
             // std::cout << "rejected energy: " << energy_new << std::endl;

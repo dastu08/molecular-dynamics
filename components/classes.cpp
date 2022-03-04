@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "evaluation.h"
 #include "helpers.h"
 #include "initialization.h"
 #include "potentials.h"
@@ -170,7 +171,8 @@ void Simulation::run() {
     }
 
     MC::metropolis(positions,
-                   MC::lennard_jones_rdf,
+                   MC::lennard_jones,
+                   MC::lennard_jones_single,
                    num_samples,
                    num_particles,
                    step_size,
@@ -179,9 +181,9 @@ void Simulation::run() {
                    MC::sample_energies_rdf,
                    data,
                    box_length,
-                   num_bins);
+                   num_bins,
+                   MD::radial_distribution_hist);
 
-    // MD::array2file(data, "../data/05/hist.txt", "idx,x1,x2,x3");
     std::cout << "[Info] Finished simulation of "
               << num_samples
               << " samples." << std::endl;
