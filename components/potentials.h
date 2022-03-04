@@ -77,6 +77,34 @@ double lennard_jones_rdf(const Eigen::ArrayX3d &positions,
                          double side_length,
                          Eigen::VectorXi &r_hist,
                          double num_bins);
+
+/* Compute the LJ energy of one particle interacting with the others
+
+Parameters:
+    * positions:
+        array of particle positions of size Nx3, N is the number of particles
+    * num_particles:
+        number of particles, equivalent to the number of rows of the positions
+        array
+    * side_length:
+        side length of the box for the minimum image convention
+    * particle:
+        index of the particle which determines the interaction with the others
+
+Description:
+    * Compute relative distance to each other particle.
+    * Apply the minimum image convention.
+    * Compute the LJ energy
+        V_{LJ}(r) = 4 epsilon ( (sigma/r)^{12} - (sigma/r)^6 )
+    * Add everything up to the total potential energy of the single particle.
+    * positions in units of sigma.
+    * energy in units of epsilon.
+*/
+double lennard_jones_single(const Eigen::ArrayX3d &positions,
+                            uint num_particles,
+                            double side_length,
+                            uint particle);
+
 }  // namespace MC
 
 #endif  // __POTENTIALS_H__
