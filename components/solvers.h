@@ -151,8 +151,9 @@ Description:
     * Move the particle in a random direction inside the box
         [-step_size, step_size]^3 around the previous position.
     * Override the particles position in positions array.
+    * Return the moved particle index.
 */
-void move(Eigen::ArrayX3d &positions,
+uint move(Eigen::ArrayX3d &positions,
           uint num_particles,
           double step_size);
 
