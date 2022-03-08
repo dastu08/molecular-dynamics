@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "evaluation.h"
 #include "helpers.h"
 #include "initialization.h"
 #include "potentials.h"
@@ -9,6 +10,7 @@
 #include "solvers.h"
 
 namespace MD {
+
 Simulation::Simulation(uint n,
                        double time_step,
                        uint num_t_steps,
@@ -28,7 +30,7 @@ Simulation::Simulation(uint n,
 }
 
 void Simulation::printInfo() {
-    std::cout << "[Info] Simulation Information\n"
+    std::cout << "[Info] MD Simulation Information\n"
               << "# particles \t\t: " << num_particles << '\n'
               << "time step: \t\t: " << time_step << '\n'
               << "# time steps \t\t: " << num_t_steps << '\n'
@@ -108,4 +110,94 @@ void Simulation::export2file(std::string filepath) {
                    filepath + std::to_string(n) + ".txt",
                    "t,epot,ekin," + head);
 }
+
 }  // namespace MD
+
+namespace MC {
+
+Simulation::Simulation(uint n,
+                       uint num_samples,
+                       double step_size,
+                       double box_length,
+                       double temperature,
+                       uint num_bins) {
+    this->n = n;
+    this->num_samples = num_samples;
+    this->step_size = step_size;
+    this->box_length = box_length;
+    this->temperature = temperature;
+    this->beta = 1 / temperature;
+    this->num_bins = num_bins;
+
+    initialzedFlag = 0;
+}
+
+void Simulation::printInfo() {
+    std::cout << "[Info] MC Simulation Information\n"
+              << "# particles \t\t: " << num_particles << '\n'
+              << "# samplings \t\t: " << num_samples << '\n'
+              << "step size \t\t: " << step_size << '\n'
+              << "temperature \t\t: " << temperature << '\n'
+              << "beta \t\t\t: " << beta << '\n'
+              << "separation \t\t: " << separation << '\n'
+              << "box length \t\t: " << box_length << '\n'
+              << "# bins \t\t\t: " << num_bins << '\n'
+              << "initializedFlag \t: " << initialzedFlag
+              << std::endl;
+}
+
+void Simulation::init(double separation, uint seed) {
+    this->seed = seed;
+    this->separation = separation;
+
+    // set size for data array
+    data = Eigen::ArrayXXd::Zero(num_samples, 2 + num_bins);
+    // data = Eigen::ArrayXXd::Zero(num_samples, 4);
+
+    //  initi positions and velocities
+    num_particles = MD::init_positions_3d(positions, n, separation);
+
+    // set flag to ready
+    initialzedFlag = 1;
+}
+
+void Simulation::run() {
+    if (initialzedFlag != 1) {
+        std::cout << "[Warning] The simulation was not initialized. "
+                  << "Skipping run. (initializedFlag = "
+                  << initialzedFlag << ")"
+                  << std::endl;
+        return;
+    }
+
+    MC::metropolis(positions,
+                   MC::lennard_jones,
+                   MC::lennard_jones_single,
+                   num_samples,
+                   num_particles,
+                   step_size,
+                   beta,
+                   seed,
+                   MC::sample_energies_rdf,
+                   data,
+                   box_length,
+                   num_bins,
+                   MD::radial_distribution_hist);
+
+    std::cout << "[Info] Finished simulation of "
+              << num_samples
+              << " samples." << std::endl;
+}
+
+void Simulation::export2file(std::string filepath) {
+    std::string head;
+    // create the header string for the bins
+    MD::stringList(head, "n", num_bins);
+
+    // save the sampled data (index, epot, n0, ...) to a file
+    MD::array2file(data,
+                   filepath + std::to_string(n) + ".txt",
+                   "index,epot," + head);
+}
+
+}  // namespace MC

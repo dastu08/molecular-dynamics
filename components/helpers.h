@@ -3,6 +3,7 @@
 
 #include <Eigen/Core>
 #include <string>
+#include "stdlib.h"
 
 namespace MD {
 
@@ -46,5 +47,19 @@ Description:
 void stringList(std::string& string, std::string symbol, uint repetition);
 
 }  // namespace MD
+
+namespace MC {
+
+// Random double value between [0, 1]
+inline double random_double_1() {
+    return (double)rand() / RAND_MAX;
+}
+
+// Random double value between [-1, 1]
+inline double random_double_2() {
+    return 2 * ((double)rand() / RAND_MAX) - 1;
+}
+
+}  // namespace MC
 
 #endif  // __HELPERS_H__

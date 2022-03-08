@@ -89,3 +89,19 @@ void sample_energies_rdf(uint index,
 }
 
 }  // namespace MD
+
+namespace MC {
+
+void sample_energies_rdf(uint index,
+                         Eigen::ArrayX3d &positions,
+                         double e_pot,
+                         Eigen::VectorXi &r_hist,
+                         Eigen::ArrayXXd &data,
+                         double side_length,
+                         uint num_bins) {
+    data(index, 0) = index;
+    data(index, 1) = e_pot;
+    data(index, Eigen::seqN(2, num_bins)) = r_hist.cast<double>().transpose();
+}
+
+}  // namespace MC
