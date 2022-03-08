@@ -140,7 +140,7 @@ class Simulation {
         * num_samples:
             number of samples to generate with Metropolis
         * step_size:
-            TODO
+            step size for the metropolis trial move
         * box_length:
             side length of the spacial box of the particles
         * temperature:
@@ -173,7 +173,7 @@ class Simulation {
         * separation:
             initial particles separation along each spacial dimension
         * seed:
-            TODO
+            seed for the random number generator
 
     Description:
         * Set the data array to zero but with the correct size.
@@ -186,7 +186,8 @@ class Simulation {
 
     Description:
         * Check for initializedFlag to be 1.
-        *
+        * Run the metropolis algorithms with the Lennard-Jones potential
+        and sample the potential energy and the radial distribution histogram.
         * Print information after finishing the run.
     */
     void run();

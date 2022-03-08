@@ -161,17 +161,44 @@ uint move(Eigen::ArrayX3d &positions,
 
 Parameters:
     * positions:
+        Nx3 array of the positions, has rows as N=num_particles
     * potential:
+        function with parameters (positions, num_particles, box_length) that
+        computed the potential eneryg of the system    
     * num_samples:
+        number of samples to produce
     * num_particles:
+        number of partilces, rows in positions array
     * step_size:
+        step size for the trial move
     * beta:
+        inverse temperature in reduced units
     * seed:
+        seed for the random number generator
     * sampler:
+        sampling function with parameters (index, positions, e_pot, r_hist,
+        data, box_length, num_bins) where the relevant quantities are written
+        into data 
     * data:
+        array holding the sampled data, needs at least 2 + num_bins columns
     * box_length:
+        side length of the box used for the minimum image convention
     * num_bins:
+        number of bins for the radial distribution histogram
     * index_offset
+        index offset for writing into the data array
+
+Description:
+    * Compute the potential energy of the system.
+    * Compute the radial distribution histogram.
+    * Loop over the the number of samples.
+    * Trial move with given step size.
+    * Compute the new and old single particle energies.
+    * Generate a reference value unifromly from [0, 1].
+    * Check if the move will be accepted.
+    * If yes compute the radial distribution histogram.
+    * Sample the data.potential energy and the radial distribution histogram.
+    * Compute the acceptance rate after finishing the loop.
  */
 void metropolis(Eigen::ArrayX3d &positions,
                 double (*potential)(const Eigen::ArrayX3d &,
