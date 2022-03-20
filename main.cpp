@@ -15,7 +15,8 @@
 // #define REPORT_2
 // #define REPORT_3
 // #define REPORT_4
-#define REPORT_5
+// #define REPORT_5
+#define DEMO
 
 const uint seed = 8028;
 // see Rahman for the constants
@@ -260,17 +261,6 @@ int main() {
 
 #endif  // REPORT_4
 
-    // MD::Simulation sim = MD::Simulation(n,
-    //                                     0.005,
-    //                                     100,
-    //                                     n * separation,
-    //                                     10,
-    //                                     20);
-    // sim.init(separation, temperature, seed);
-    // sim.printInfo();
-    // sim.run();
-    // sim.export2file("../data/04/test_file");
-
 // Report 5. Metropolis Monte Carlo
 #ifdef REPORT_5
     MC::Simulation sim = MC::Simulation(n, 2000000, 0.09, box_length, temperature);
@@ -281,6 +271,22 @@ int main() {
     sim.export2file("../data/05/mc_");
 
 #endif  // REPORT_5
+
+#ifdef DEMO
+    // Molecular Dynamics
+    MD::Simulation md = MD::Simulation(n, 0.005, 1000, box_length, 10, 20);
+    md.init(separation, temperature, seed);
+    md.printInfo();
+    md.run();
+    md.export2file("../data/md_");
+
+    // Monte Carlo
+    MC::Simulation mc = MC::Simulation(n, 1000, 0.09, box_length, temperature);
+    mc.init(separation, seed);
+    mc.printInfo();
+    mc.run();
+    mc.export2file("../data/mc_");
+#endif  // DEMO
 
     return 0;
 }

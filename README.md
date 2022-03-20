@@ -8,7 +8,9 @@
 ```bash
 # create directory structure
 mkdir data
-mkdir data/05
+# for every report create the directory like
+mkdir data/01
+# create a directory for the build files
 mkdir build
 # build the project
 cd build
