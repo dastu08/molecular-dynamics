@@ -44,6 +44,7 @@ void Simulation::printInfo() {
 }
 
 void Simulation::init(double separation, double temperature, uint seed) {
+    this->temperature = temperature;
     // set size for data array
     data = Eigen::ArrayXXd::Zero(num_t_steps + num_rescale_steps * num_rescales,
                                  3 + num_bins);
